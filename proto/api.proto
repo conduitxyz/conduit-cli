@@ -1,0 +1,138 @@
+// Copied from https://github.com/kahuang/xfac/blob/5bbd0663eadef636b5d1521574fac09aaa9e2761/server/proto/api/api.proto
+syntax = "proto3";
+package api;
+option go_package = "xfac/proto/api";
+
+//import "google/protobuf/timestamp.proto";
+
+// Indicates that this message should be displayed to the user via alert/dialog/whatever.
+// This is a wrapper object so we can eventually add more information to indicate how the error
+// should be displayed (is there a retry button? what method of display? etc) but for now the
+// message is sufficient.
+message UserFacingError {
+    string message = 1;
+}
+
+message Testnet {
+    string testnet = 1;
+    string name = 2;
+    string rpcURL = 3;
+    string explorerURL = 4;
+    string faucetURL = 5;
+
+    DeploymentType type = 1000;
+}
+
+message CreateTestnetOptions {
+    string name = 1;
+
+    string forkURL = 2;
+    int64 forkBlockNumber = 3;
+
+    int32 chainID = 4;
+
+    int64 blockBaseFeePerGas = 5;
+    int64 gasLimit = 6;
+    int64 gasPrice = 7;
+
+    string genesisJSON = 8;
+
+    oneof mining {
+        int32 blockTime = 100;
+        bool noMining = 101;
+    }
+
+    double cpuRequests = 9;
+    int32 memoryRequestsMB = 10;
+    // TODO: disk
+
+    DeploymentType type = 1000;
+}
+
+message CreateTestnetRequest {
+    string testnet = 1;
+    string organization = 2;
+    CreateTestnetOptions opts = 3;
+}
+
+message CreateTestnetResponse {
+    Testnet testnet = 1;
+}
+
+message ListTestnetsRequest {
+    string organization = 1;
+}
+
+message ListTestnetsResponse {
+    repeated Testnet testnets = 1;
+}
+
+message DeleteTestnetRequest {
+    string testnet = 1;
+    string organization = 2;
+}
+
+message GetTestnetRequest {
+    string testnet = 1;
+    string organization = 2;
+}
+
+message GetTestnetResponse {
+    Testnet testnet = 1;
+}
+
+message DeleteTestnetResponse {}
+
+/*
+message StreamTestnetLogsRequest {
+    string name = 1;
+    google.protobuf.Timestamp sinceTime = 2;
+}
+
+message StreamTestnetLogsResponse {
+    string logLine = 1;
+    google.protobuf.Timestamp time = 2;
+}
+*/
+message Organization {
+    string organization = 1;
+    string name = 2;
+    string owner = 3;
+}
+
+message User {
+    string user = 1;
+    string name = 2;
+    string email = 3;
+    string imageURL = 4;
+}
+
+message LoadUserRequest {}
+message LoadUserResponse {
+    User user = 1;
+    repeated Organization organizations = 2;
+}
+
+enum DeploymentType {
+    DEPLOYMENTTYPE_ANVIL = 0;
+    DEPLOYMENTTYPE_GETH = 1;
+    DEPLOYMENTTYPE_ERIGON = 2;
+}
+
+message EnvironmentVariable {
+    string name = 1;
+    string value = 2;
+}
+
+message CreateJobRequest {
+    string organization = 1;
+    string job = 2;
+    string repository = 3;
+}
+
+message AssignJobRequest {
+    string organization = 1;
+    string job = 2;
+    string tesnet = 3;
+    repeated EnvironmentVariable variables = 4;
+}

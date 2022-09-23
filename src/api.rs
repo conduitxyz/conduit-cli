@@ -3,8 +3,8 @@ use eyre::Result;
 use reqwest::Client;
 use uuid::Uuid;
 
-use crate::types::{ListRequest, ListResponse};
-use serde::Serialize;
+use crate::types::{ListTestnetsRequest, ListTestnetsResponse};
+use serde::{de::DeserializeOwned, Serialize};
 
 #[derive(Clone, Debug, Parser)]
 /// Parameters for auth'ing and connecting to the ExFac API.
@@ -41,7 +41,19 @@ impl ExFac {
         }
     }
 
-    async fn request<T: Serialize>(&self, url: String, req: T) -> Result<ListResponse> {
+    /// Returns a list of all the testnets under the provided organization.
+    pub async fn list(&self, organization: Uuid) -> Result<ListTestnetsResponse> {
+        let url = format!("{}/list", self.opts.network());
+        self.request(
+            url,
+            ListTestnetsRequest {
+                organization: organization.to_string(),
+            },
+        )
+        .await
+    }
+
+    async fn request<T: Serialize, R: DeserializeOwned>(&self, url: String, req: T) -> Result<R> {
         let res = self
             .client
             .post(url)
@@ -52,17 +64,5 @@ impl ExFac {
             .json()
             .await?;
         Ok(res)
-    }
-
-    /// Returns a list of all the testnets under the provided organization.
-    pub async fn list(&self, organization: Uuid) -> Result<ListResponse> {
-        let url = format!("{}/list", self.opts.network());
-        self.request(
-            url,
-            ListRequest {
-                organization: organization.to_string(),
-            },
-        )
-        .await
     }
 }
