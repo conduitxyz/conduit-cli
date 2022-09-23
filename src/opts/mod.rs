@@ -1,4 +1,4 @@
-use crate::api::ExFacOpts;
+use crate::api::config::ExFacOpts;
 use clap::{Parser, Subcommand};
 
 mod network;

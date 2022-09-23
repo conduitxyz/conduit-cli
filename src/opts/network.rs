@@ -2,9 +2,12 @@ use clap::{Parser, Subcommand};
 use std::fmt::Write;
 use uuid::Uuid;
 
-use crate::api::ExFac;
+use crate::api::{network::CreateOpts, ExFac};
 
 #[derive(Debug, Parser)]
+// TODO: Should the user set a default organization client side
+// in some config when they auth, instead of having to specify it all the time?
+// And maybe make it part of ExFac config?
 pub struct NetworkArgs {
     #[clap(subcommand)]
     sub: Subcommands,
@@ -20,10 +23,12 @@ pub enum Subcommands {
         /// The organization you want to list networks for.
         organization: Uuid,
     },
+    /// Creates a new network
+    Create(CreateOpts),
 }
 
 impl NetworkArgs {
-    pub async fn run(&self, exfac: ExFac) -> eyre::Result<()> {
+    pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
         match self.sub {
             Subcommands::List { organization } => {
                 let resp = exfac.list(organization).await?;
@@ -36,6 +41,10 @@ impl NetworkArgs {
                     let table = to_table(network);
                     println!("{}", table);
                 }
+            }
+            Subcommands::Create(opts) => {
+                let resp = exfac.create(opts).await?;
+                println!("{}", serde_json::to_string(&resp)?);
             }
         }
         Ok(())
