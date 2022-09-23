@@ -3,7 +3,7 @@ use eyre::Result;
 use reqwest::Client;
 use uuid::Uuid;
 
-use crate::types::{ListTestnetsRequest, ListTestnetsResponse};
+use crate::types::{ListTestnetsRequest, ListTestnetsResponse, LoadUserResponse};
 use serde::{de::DeserializeOwned, Serialize};
 
 #[derive(Clone, Debug, Parser)]
@@ -22,6 +22,11 @@ impl ExFacOpts {
     // Returns the network slug.
     fn network(&self) -> String {
         format!("{}/v1/testnet", self.url)
+    }
+
+    // Returns the user slug.
+    fn user(&self) -> String {
+        format!("{}/v1/user", self.url)
     }
 }
 
@@ -44,7 +49,7 @@ impl ExFac {
     /// Returns a list of all the testnets under the provided organization.
     pub async fn list(&self, organization: Uuid) -> Result<ListTestnetsResponse> {
         let url = format!("{}/list", self.opts.network());
-        self.request(
+        self.post(
             url,
             ListTestnetsRequest {
                 organization: organization.to_string(),
@@ -53,7 +58,23 @@ impl ExFac {
         .await
     }
 
-    async fn request<T: Serialize, R: DeserializeOwned>(&self, url: String, req: T) -> Result<R> {
+    /// Returns the user's information
+    pub async fn user(&self) -> Result<LoadUserResponse> {
+        self.get(self.opts.user()).await
+    }
+
+    async fn get<R: DeserializeOwned>(&self, url: String) -> Result<R> {
+        Ok(self
+            .client
+            .get(url)
+            .bearer_auth(&self.opts.api_key)
+            .send()
+            .await?
+            .json()
+            .await?)
+    }
+
+    async fn post<T: Serialize, R: DeserializeOwned>(&self, url: String, req: T) -> Result<R> {
         let res = self
             .client
             .post(url)

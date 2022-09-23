@@ -2,6 +2,7 @@ use crate::api::ExFacOpts;
 use clap::{Parser, Subcommand};
 
 mod network;
+mod user;
 
 #[derive(Debug, Parser)]
 #[clap(name = "exfac", version = crate::utils::VERSION_MESSAGE)]
@@ -27,4 +28,7 @@ pub enum Subcommands {
         #[clap(arg_enum)]
         shell: clap_complete::Shell,
     },
+
+    #[clap(alias = "u")]
+    User(user::UserArgs),
 }

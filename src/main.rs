@@ -24,6 +24,7 @@ async fn main() -> eyre::Result<()> {
             generate(shell, &mut Opts::command(), "exfac", &mut std::io::stdout())
         }
         Subcommands::Network(args) => args.run(exfac).await?,
+        Subcommands::User(args) => args.run(exfac).await?,
     }
 
     Ok(())

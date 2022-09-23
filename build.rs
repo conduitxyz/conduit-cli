@@ -17,6 +17,8 @@ fn main() {
     config.field_attribute("rpcURL", "#[serde(rename = \"rpcURL\")]");
     config.field_attribute("explorerURL", "#[serde(rename = \"explorerURL\")]");
     config.field_attribute("faucetURL", "#[serde(rename = \"faucetURL\")]");
+    config.field_attribute("imageURL", "#[serde(rename = \"imageURL\")]");
+    config.field_attribute("forkURL", "#[serde(rename = \"forkURL\")]");
 
     // Add logic for parsing the enums from strings.
     config.field_attribute(
