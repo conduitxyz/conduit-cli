@@ -2,20 +2,29 @@
 use clap::{IntoApp, Parser};
 use clap_complete::generate;
 
-// Logging
-use tracing_error::ErrorLayer;
-use tracing_subscriber::prelude::*;
+use exfac::{
+    api::ExFac,
+    handler,
+    opts::{Opts, Subcommands},
+    utils,
+};
 
-use crate::utils;
-
-fn main() -> eyre::Result<()> {
-    dotenv::dotenv()?;
+#[tokio::main]
+async fn main() -> eyre::Result<()> {
+    // dotenv::dotenv()?;
     handler::install()?;
     utils::subscriber();
     utils::enable_paint();
 
     let opts = Opts::parse();
-    match opts.sub {}
+    let exfac = ExFac::new(opts.api);
+
+    match opts.sub {
+        Subcommands::Completions { shell } => {
+            generate(shell, &mut Opts::command(), "exfac", &mut std::io::stdout())
+        }
+        Subcommands::Network(args) => args.run(exfac).await?,
+    }
 
     Ok(())
 }

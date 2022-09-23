@@ -1,7 +1,17 @@
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ListRequest {
+    pub organization: String,
+}
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ListResponse {
+    testnets: Vec<ListResponseInner>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct ListResponseInner {
     testnet: String,
     name: String,
     #[serde(rename = "rpcURL")]
