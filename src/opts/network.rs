@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use std::fmt::Write;
 use uuid::Uuid;
 
 use crate::api::ExFac;
@@ -10,7 +11,7 @@ pub struct NetworkArgs {
 }
 
 #[derive(Debug, Subcommand)]
-#[clap(about = "Commands about interacting with the various networks you have spinned up")]
+/// Commands about interacting with the various networks you have spinned up
 #[allow(clippy::large_enum_variant)]
 pub enum Subcommands {
     /// Lists all networks under the provided organization.
@@ -26,9 +27,32 @@ impl NetworkArgs {
         match self.sub {
             Subcommands::List { organization } => {
                 let resp = exfac.list(organization).await?;
-                println!("{}", serde_json::to_string(&resp)?);
+                for network in resp.testnets {
+                    println!("Name: {}", &network.name);
+                    let mut network = serde_json::to_value(&network)?;
+                    let obj = network.as_object_mut().unwrap();
+                    obj.remove("name");
+
+                    let table = to_table(network);
+                    println!("{}", table);
+                }
             }
         }
         Ok(())
+    }
+}
+
+/// Given a k/v serde object, it pretty prints its keys and values as a table.
+pub fn to_table(value: serde_json::Value) -> String {
+    match value {
+        serde_json::Value::String(s) => s,
+        serde_json::Value::Object(map) => {
+            let mut s = String::new();
+            for (k, v) in map.iter() {
+                writeln!(&mut s, "{: <20} {}", k, v).expect("could not write k/v to table");
+            }
+            s
+        }
+        _ => "".to_owned(),
     }
 }
