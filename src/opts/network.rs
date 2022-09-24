@@ -2,7 +2,10 @@ use clap::{Parser, Subcommand};
 use std::fmt::Write;
 use uuid::Uuid;
 
-use crate::api::{network::CreateOpts, ExFac};
+use crate::api::{
+    network::{CreateOpts, DeleteOpts},
+    ExFac,
+};
 
 #[derive(Debug, Parser)]
 // TODO: Should the user set a default organization client side
@@ -23,8 +26,12 @@ pub enum Subcommands {
         /// The organization you want to list networks for.
         organization: Uuid,
     },
-    /// Creates a new network
+
+    /// Creates a new network.
     Create(CreateOpts),
+
+    /// Deletes a network.
+    Delete(DeleteOpts),
 }
 
 impl NetworkArgs {
@@ -45,6 +52,10 @@ impl NetworkArgs {
             Subcommands::Create(opts) => {
                 let resp = exfac.create(opts).await?;
                 println!("{}", serde_json::to_string(&resp)?);
+            }
+            Subcommands::Delete(opts) => {
+                exfac.delete(opts.organization, opts.name).await?;
+                println!("Network {} deleted", opts.name);
             }
         }
         Ok(())

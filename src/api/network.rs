@@ -6,11 +6,14 @@ use crate::types::{
     create_testnet_options::Mining, CreateTestnetOptions, CreateTestnetRequest,
     CreateTestnetResponse, DeploymentType,
 };
-use crate::types::{ListTestnetsRequest, ListTestnetsResponse};
+use crate::types::{
+    DeleteTestnetRequest, DeleteTestnetResponse, ListTestnetsRequest, ListTestnetsResponse,
+};
 
 use eyre::Result;
 
 #[derive(Debug, Parser)]
+/// Options for calling the /create endpoint on the API.
 pub struct CreateOpts {
     /// The organization you want to create a network for.
     #[clap(short, long)]
@@ -47,6 +50,18 @@ pub struct CreateOpts {
     /// Optionally set the block time. If not provided, will insta-mine.
     #[clap(long)]
     block_time: Option<usize>,
+}
+
+#[derive(Debug, Parser)]
+/// Options for calling the /delete endpoint on the API.
+pub struct DeleteOpts {
+    /// The organization you want to delete a network for.
+    #[clap(short, long)]
+    pub organization: Uuid,
+
+    /// The name of the network you are deleting.
+    #[clap(short, long)]
+    pub name: Uuid,
 }
 
 impl ExFac {
@@ -87,6 +102,19 @@ impl ExFac {
                     // in proto?
                     mining: opts.block_time.map(|x| Mining::BlockTime(x as i32)),
                 }),
+            },
+        )
+        .await
+    }
+
+    /// Deletes a network of your choice.
+    pub async fn delete(&self, organization: Uuid, name: Uuid) -> Result<DeleteTestnetResponse> {
+        let url = format!("{}/delete", self.opts.network());
+        self.post(
+            url,
+            DeleteTestnetRequest {
+                organization: organization.to_string(),
+                testnet: name.to_string(),
             },
         )
         .await
