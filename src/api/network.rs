@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::api::ExFac;
 use crate::types::{
     create_testnet_options::Mining, CreateTestnetOptions, CreateTestnetRequest,
-    CreateTestnetResponse, DeploymentType,
+    CreateTestnetResponse, DeploymentType, CreateJobRequest
 };
 use crate::types::{
     DeleteTestnetRequest, DeleteTestnetResponse, ListTestnetsRequest, ListTestnetsResponse,
@@ -102,6 +102,7 @@ impl ExFac {
                     // in proto?
                     mining: opts.block_time.map(|x| Mining::BlockTime(x as i32)),
                 }),
+                jobs: Vec::<CreateJobRequest>::new(),
             },
         )
         .await

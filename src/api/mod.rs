@@ -4,7 +4,7 @@ use config::ExFacOpts;
 pub mod network;
 
 use eyre::Result;
-use reqwest::Client;
+use reqwest::{Client};
 
 use crate::types::LoadUserResponse;
 use serde::{de::DeserializeOwned, Serialize};
@@ -34,7 +34,7 @@ impl ExFac {
         Ok(self
             .client
             .get(url)
-            .bearer_auth(&self.opts.api_key)
+            .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
             .send()
             .await?
             .json()
@@ -45,7 +45,7 @@ impl ExFac {
         let res = self
             .client
             .post(url)
-            .bearer_auth(&self.opts.api_key)
+            .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
             .json(&req)
             .send()
             .await?
