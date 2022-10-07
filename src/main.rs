@@ -59,6 +59,7 @@ async fn main() -> eyre::Result<()> {
         Subcommands::Network(args) => args.run(exfac).await?,
         Subcommands::User(args) => args.run(exfac).await?,
         Subcommands::JobTemplate(args) => args.run(exfac).await?,
+        Subcommands::Job(args) => args.run(exfac).await?,
     }
 
     Ok(())
