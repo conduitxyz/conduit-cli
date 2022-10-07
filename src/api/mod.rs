@@ -2,7 +2,8 @@ pub mod config;
 use config::ExFacOpts;
 
 pub mod network;
-
+pub mod job_template;
+pub mod job;
 use eyre::Result;
 use reqwest::{Client};
 
@@ -35,6 +36,7 @@ impl ExFac {
             .client
             .get(url)
             .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
+            .header("User-Agent".to_owned(), format!("conduit-cli/{}",  env!("VERGEN_GIT_SHA_SHORT")))
             .send()
             .await?
             .json()
@@ -46,6 +48,7 @@ impl ExFac {
             .client
             .post(url)
             .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
+            .header("User-Agent".to_owned(), format!("conduit-cli/{}",  env!("VERGEN_GIT_SHA_SHORT")))
             .json(&req)
             .send()
             .await?

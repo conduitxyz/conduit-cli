@@ -20,12 +20,6 @@ fn main() {
     config.field_attribute("imageURL", "#[serde(rename = \"imageURL\")]");
     config.field_attribute("forkURL", "#[serde(rename = \"forkURL\")]");
 
-    // Add logic for parsing the enums from strings.
-    config.field_attribute(
-        "Testnet.type",
-        "#[serde(deserialize_with = \"crate::types::deployment_type_from_str\")]",
-    );
-
     config
         .compile_protos(&["proto/api.proto"], &["proto/"])
         .unwrap();

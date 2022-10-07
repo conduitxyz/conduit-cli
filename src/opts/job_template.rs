@@ -3,7 +3,7 @@ use std::fmt::Write;
 use uuid::Uuid;
 
 use crate::api::{
-    network::{CreateOpts, DeleteOpts},
+    job_template::{CreateOpts},
     ExFac,
 };
 
@@ -11,51 +11,44 @@ use crate::api::{
 // TODO: Should the user set a default organization client side
 // in some config when they auth, instead of having to specify it all the time?
 // And maybe make it part of ExFac config?
-pub struct NetworkArgs {
+pub struct JobTemplateArgs {
     #[clap(subcommand)]
     sub: Subcommands,
 }
 
 #[derive(Debug, Subcommand)]
-/// Commands about interacting with the various networks you have spinned up
+/// Commands about interacting with the various job templates you have spinned up
 #[allow(clippy::large_enum_variant)]
 pub enum Subcommands {
-    /// Lists all networks under the provided organization.
+    /// Lists all job templates under the provided organization.
     List {
         #[clap(short, long)]
-        /// The organization you want to list networks for.
+        /// The organization you want to list job templates for.
         organization: Uuid,
     },
 
-    /// Creates a new network.
-    Create(CreateOpts),
-
-    /// Deletes a network.
-    Delete(DeleteOpts),
+    /// Creates or updates a job template.
+    CreateOrUpdate(CreateOpts),
 }
 
-impl NetworkArgs {
+impl JobTemplateArgs {
     pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
         match self.sub {
             Subcommands::List { organization } => {
-                let resp = exfac.list_networks(organization).await?;
-                for network in resp.testnets {
-                    println!("Name: {}", &network.name);
-                    let mut network = serde_json::to_value(&network)?;
-                    let obj = network.as_object_mut().unwrap();
+                let resp = exfac.list_job_templates(organization).await?;
+                for job_template in resp.templates {
+                    println!("Name: {}", &job_template.name);
+                    let mut job_template = serde_json::to_value(&job_template)?;
+                    let obj = job_template.as_object_mut().unwrap();
                     obj.remove("name");
 
-                    let table = to_table(network);
+                    let table = to_table(job_template);
                     println!("{}", table);
                 }
             }
-            Subcommands::Create(opts) => {
-                let resp = exfac.create_network(opts).await?;
+            Subcommands::CreateOrUpdate(opts) => {
+                let resp = exfac.create_or_update_job_template(opts).await?;
                 println!("{}", serde_json::to_string(&resp)?);
-            }
-            Subcommands::Delete(opts) => {
-                exfac.delete_network(opts.organization, opts.name).await?;
-                println!("Network {} deleted", opts.name);
             }
         }
         Ok(())

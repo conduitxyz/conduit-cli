@@ -3,6 +3,7 @@ use clap::{Parser, Subcommand};
 
 mod network;
 mod user;
+mod job_template;
 
 #[derive(Debug, Parser)]
 #[clap(name = "exfac", version = crate::utils::VERSION_MESSAGE)]
@@ -31,4 +32,8 @@ pub enum Subcommands {
 
     #[clap(alias = "u")]
     User(user::UserArgs),
+    
+    #[clap(alias = "jt")]
+    JobTemplate(job_template::JobTemplateArgs),
+    
 }
