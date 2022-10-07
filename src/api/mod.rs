@@ -35,8 +35,14 @@ impl ExFac {
         Ok(self
             .client
             .get(url)
-            .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
-            .header("User-Agent".to_owned(), format!("conduit-cli/{}",  env!("VERGEN_GIT_SHA_SHORT")))
+            .header(
+                "Authorization".to_owned(),
+                format!("Token {}", &self.opts.api_key),
+            )
+            .header(
+                "User-Agent".to_owned(),
+                format!("conduit-cli/{}", env!("VERGEN_GIT_SHA_SHORT")),
+            )
             .send()
             .await?
             .json()
@@ -47,8 +53,14 @@ impl ExFac {
         let res = self
             .client
             .post(url)
-            .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
-            .header("User-Agent".to_owned(), format!("conduit-cli/{}",  env!("VERGEN_GIT_SHA_SHORT")))
+            .header(
+                "Authorization".to_owned(),
+                format!("Token {}", &self.opts.api_key),
+            )
+            .header(
+                "User-Agent".to_owned(),
+                format!("conduit-cli/{}", env!("VERGEN_GIT_SHA_SHORT")),
+            )
             .json(&req)
             .send()
             .await?

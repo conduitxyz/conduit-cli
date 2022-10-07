@@ -29,10 +29,10 @@ async fn main() -> eyre::Result<()> {
     // Now get the default organization
     let mut home_dir = dirs::home_dir()
     .unwrap();
-    
+
     home_dir::push(".conduit/config".to_owned());
     let mut config_file_path = home_dir.into_os_string().into_string().unwrap();
-    
+
     let mut fileExists = File::open(config_file_path);
     if fileExists.is_err() {
         File::create(config_file_path)?;
@@ -40,7 +40,7 @@ async fn main() -> eyre::Result<()> {
 
     let settings = Config::builder()
         .add_source(config::File::with_name(config_file_path));
-    
+
     let mut defaultOrganization = settings.get_string("organization".to_owned());
     if defaultOrganization.is_err() {
         // Fetch and save the default organization
