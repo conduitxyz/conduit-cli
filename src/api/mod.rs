@@ -1,10 +1,11 @@
 pub mod config;
 use config::ExFacOpts;
 
+pub mod job;
+pub mod job_template;
 pub mod network;
-
 use eyre::Result;
-use reqwest::{Client};
+use reqwest::Client;
 
 use crate::types::LoadUserResponse;
 use serde::{de::DeserializeOwned, Serialize};
@@ -34,7 +35,14 @@ impl ExFac {
         Ok(self
             .client
             .get(url)
-            .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
+            .header(
+                "Authorization".to_owned(),
+                format!("Token {}", &self.opts.api_key),
+            )
+            .header(
+                "User-Agent".to_owned(),
+                format!("conduit-cli/{}", env!("VERGEN_GIT_SHA_SHORT")),
+            )
             .send()
             .await?
             .json()
@@ -45,7 +53,14 @@ impl ExFac {
         let res = self
             .client
             .post(url)
-            .header("Authorization".to_owned(), format!("Token {}", &self.opts.api_key))
+            .header(
+                "Authorization".to_owned(),
+                format!("Token {}", &self.opts.api_key),
+            )
+            .header(
+                "User-Agent".to_owned(),
+                format!("conduit-cli/{}", env!("VERGEN_GIT_SHA_SHORT")),
+            )
             .json(&req)
             .send()
             .await?

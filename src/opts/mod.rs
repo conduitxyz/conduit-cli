@@ -1,6 +1,8 @@
 use crate::api::config::ExFacOpts;
 use clap::{Parser, Subcommand};
 
+mod job;
+mod job_template;
 mod network;
 mod user;
 
@@ -25,10 +27,16 @@ pub enum Subcommands {
 
     #[clap(visible_alias = "com", about = "Generate shell completions script.")]
     Completions {
-        #[clap(arg_enum)]
+        #[clap(value_enum)]
         shell: clap_complete::Shell,
     },
 
     #[clap(alias = "u")]
     User(user::UserArgs),
+
+    #[clap(alias = "jt")]
+    JobTemplate(job_template::JobTemplateArgs),
+
+    #[clap(alias = "j")]
+    Job(job::JobArgs),
 }

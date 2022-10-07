@@ -18,6 +18,14 @@ impl ExFacOpts {
         format!("{}/v1/testnet", self.url)
     }
 
+    pub fn job_template(&self) -> String {
+        format!("{}/v1/job_template", self.url)
+    }
+
+    pub fn job(&self) -> String {
+        format!("{}/v1/jobs", self.url)
+    }
+
     // Returns the user slug.
     pub fn user(&self) -> String {
         format!("{}/v1/user", self.url)

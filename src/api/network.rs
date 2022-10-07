@@ -3,8 +3,8 @@ use uuid::Uuid;
 
 use crate::api::ExFac;
 use crate::types::{
-    create_testnet_options::Mining, CreateTestnetOptions, CreateTestnetRequest,
-    CreateTestnetResponse, DeploymentType, CreateJobRequest
+    create_testnet_options::Mining, CreateJobRequest, CreateTestnetOptions, CreateTestnetRequest,
+    CreateTestnetResponse, DeploymentType,
 };
 use crate::types::{
     DeleteTestnetRequest, DeleteTestnetResponse, ListTestnetsRequest, ListTestnetsResponse,
@@ -66,7 +66,7 @@ pub struct DeleteOpts {
 
 impl ExFac {
     /// Returns a list of all the networks under the provided organization.
-    pub async fn list(&self, organization: Uuid) -> Result<ListTestnetsResponse> {
+    pub async fn list_networks(&self, organization: Uuid) -> Result<ListTestnetsResponse> {
         let url = format!("{}/list", self.opts.network());
         self.post(
             url,
@@ -78,7 +78,7 @@ impl ExFac {
     }
 
     /// Creates a new network for the provided options.
-    pub async fn create(&self, opts: CreateOpts) -> Result<CreateTestnetResponse> {
+    pub async fn create_network(&self, opts: CreateOpts) -> Result<CreateTestnetResponse> {
         let url = format!("{}/create", self.opts.network());
         self.post(
             url,
@@ -109,7 +109,11 @@ impl ExFac {
     }
 
     /// Deletes a network of your choice.
-    pub async fn delete(&self, organization: Uuid, name: Uuid) -> Result<DeleteTestnetResponse> {
+    pub async fn delete_network(
+        &self,
+        organization: Uuid,
+        name: Uuid,
+    ) -> Result<DeleteTestnetResponse> {
         let url = format!("{}/delete", self.opts.network());
         self.post(
             url,
