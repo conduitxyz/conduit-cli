@@ -26,7 +26,7 @@ pub enum Subcommands {
 
     #[clap(visible_alias = "com", about = "Generate shell completions script.")]
     Completions {
-        #[clap(arg_enum)]
+        #[clap(value_enum)]
         shell: clap_complete::Shell,
     },
 

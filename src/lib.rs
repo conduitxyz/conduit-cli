@@ -43,4 +43,56 @@ pub mod types {
         };
         Ok(s)
     }
+
+    // Parses EnvVars as a semi-colon separated list of key-value pairs, e.g "key:val"
+    impl FromStr for EnvironmentVariable {
+        type Err = String;
+
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            let mut it = s.split(':');
+            let name = it
+                .next()
+                .ok_or_else(|| format!("No Key found in env var: {s}"))?
+                .to_string();
+            if name.is_empty() {
+                return Err(format!("No Key found in env var: {s}"));
+            }
+
+            let value = it
+                .next()
+                .ok_or_else(|| format!("No Value found in env var: {s}"))?
+                .to_string();
+            if value.is_empty() {
+                return Err(format!("No Value found in env var: {s}"));
+            }
+
+            Ok(Self { name, value })
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::str::FromStr;
+    use types::EnvironmentVariable;
+
+    #[test]
+    fn parse_envvar() {
+        assert_eq!(
+            EnvironmentVariable::from_str("key:val").unwrap(),
+            EnvironmentVariable {
+                name: "key".to_string(),
+                value: "val".to_string()
+            }
+        );
+        assert_eq!(
+            EnvironmentVariable::from_str("").unwrap_err(),
+            "No Key found in env var: ",
+        );
+        assert_eq!(
+            EnvironmentVariable::from_str("key:").unwrap_err(),
+            "No Value found in env var: key:",
+        );
+    }
 }

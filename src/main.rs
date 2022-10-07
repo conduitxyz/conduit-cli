@@ -1,5 +1,5 @@
 // CLI
-use clap::{IntoApp, Parser};
+use clap::{CommandFactory, Parser};
 use clap_complete::generate;
 
 /*
