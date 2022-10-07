@@ -31,7 +31,9 @@ impl ExFac {
         self.get(self.opts.user()).await
     }
 
+    #[tracing::instrument(skip(self))]
     async fn get<R: DeserializeOwned>(&self, url: String) -> Result<R> {
+        tracing::trace!("tx");
         let res = self
             .client
             .get(url)
@@ -46,6 +48,7 @@ impl ExFac {
             .send()
             .await?;
         let body = res.bytes().await?;
+        tracing::trace!(resp = ?String::from_utf8_lossy(&body), "rx");
 
         let res = serde_json::from_slice(&body).map_err(|err| ClientError::SerdeJson {
             err,
@@ -55,11 +58,13 @@ impl ExFac {
         Ok(res)
     }
 
+    #[tracing::instrument(skip(self, req))]
     async fn post<T: Serialize + std::fmt::Debug, R: DeserializeOwned>(
         &self,
         url: String,
         req: T,
     ) -> Result<R> {
+        tracing::trace!(?req, "tx");
         let res = self
             .client
             .post(url)
@@ -76,6 +81,7 @@ impl ExFac {
             .await?;
 
         let body = res.bytes().await?;
+        tracing::trace!(resp = ?String::from_utf8_lossy(&body), "rx");
 
         let res = serde_json::from_slice(&body).map_err(|err| ClientError::SerdeJson {
             err,

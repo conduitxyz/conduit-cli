@@ -49,7 +49,9 @@ pub struct CreateOpts {
 // TODO: Investigate whether we want to split in pure create/update apis.
 impl ExFac {
     /// Creates a new network for the provided options.
+    #[tracing::instrument(skip(self, opts))]
     pub async fn assign(&self, opts: CreateOpts) -> Result<CreateJobResponse> {
+        tracing::debug!(?opts, "assigning job");
         let url = format!("{}/create", self.opts.job());
         let use_default_command = opts.execute_command.is_none();
         self.post(

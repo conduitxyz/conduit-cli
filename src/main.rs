@@ -23,6 +23,7 @@ async fn main() -> eyre::Result<()> {
     utils::enable_paint();
 
     let opts = Opts::parse();
+    tracing::debug!(?opts);
     let exfac = ExFac::new(opts.api);
 
     /*
