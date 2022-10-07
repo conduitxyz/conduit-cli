@@ -3,8 +3,8 @@ use uuid::Uuid;
 
 use crate::api::ExFac;
 use crate::types::{
-    create_testnet_options::Mining, CreateTestnetOptions, CreateTestnetRequest,
-    CreateTestnetResponse, DeploymentType, CreateJobRequest
+    create_testnet_options::Mining, CreateJobRequest, CreateTestnetOptions, CreateTestnetRequest,
+    CreateTestnetResponse, DeploymentType,
 };
 use crate::types::{
     DeleteTestnetRequest, DeleteTestnetResponse, ListTestnetsRequest, ListTestnetsResponse,
@@ -109,7 +109,11 @@ impl ExFac {
     }
 
     /// Deletes a network of your choice.
-    pub async fn delete_network(&self, organization: Uuid, name: Uuid) -> Result<DeleteTestnetResponse> {
+    pub async fn delete_network(
+        &self,
+        organization: Uuid,
+        name: Uuid,
+    ) -> Result<DeleteTestnetResponse> {
         let url = format!("{}/delete", self.opts.network());
         self.post(
             url,

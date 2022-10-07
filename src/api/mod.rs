@@ -1,11 +1,11 @@
 pub mod config;
 use config::ExFacOpts;
 
-pub mod network;
-pub mod job_template;
 pub mod job;
+pub mod job_template;
+pub mod network;
 use eyre::Result;
-use reqwest::{Client};
+use reqwest::Client;
 
 use crate::types::LoadUserResponse;
 use serde::{de::DeserializeOwned, Serialize};
