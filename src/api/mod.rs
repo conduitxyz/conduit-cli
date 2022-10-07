@@ -32,7 +32,7 @@ impl ExFac {
     }
 
     async fn get<R: DeserializeOwned>(&self, url: String) -> Result<R> {
-        Ok(self
+        let res = self
             .client
             .get(url)
             .header(
@@ -44,12 +44,22 @@ impl ExFac {
                 format!("conduit-cli/{}", env!("VERGEN_GIT_SHA_SHORT")),
             )
             .send()
-            .await?
-            .json()
-            .await?)
+            .await?;
+        let body = res.bytes().await?;
+
+        let res = serde_json::from_slice(&body).map_err(|err| ClientError::SerdeJson {
+            err,
+            text: String::from_utf8_lossy(&body).to_string(),
+        })?;
+
+        Ok(res)
     }
 
-    async fn post<T: Serialize, R: DeserializeOwned>(&self, url: String, req: T) -> Result<R> {
+    async fn post<T: Serialize + std::fmt::Debug, R: DeserializeOwned>(
+        &self,
+        url: String,
+        req: T,
+    ) -> Result<R> {
         let res = self
             .client
             .post(url)
@@ -63,9 +73,27 @@ impl ExFac {
             )
             .json(&req)
             .send()
-            .await?
-            .json()
             .await?;
+
+        let body = res.bytes().await?;
+
+        let res = serde_json::from_slice(&body).map_err(|err| ClientError::SerdeJson {
+            err,
+            text: String::from_utf8_lossy(&body).to_string(),
+        })?;
+
         Ok(res)
     }
+}
+
+#[derive(thiserror::Error, Debug)]
+/// Error thrown when sending an HTTP request
+pub enum ClientError {
+    /// Thrown if the request failed
+    #[error("Deserialization Error: {err}. Response: {text}")]
+    /// Serde JSON Error
+    SerdeJson {
+        err: serde_json::Error,
+        text: String,
+    },
 }
