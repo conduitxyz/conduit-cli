@@ -2,10 +2,7 @@ use clap::{Parser, Subcommand};
 use std::fmt::Write;
 use uuid::Uuid;
 
-use crate::api::{
-    job_template::{CreateOpts},
-    ExFac,
-};
+use crate::api::{job_template::CreateOpts, ExFac};
 
 #[derive(Debug, Parser)]
 // TODO: Should the user set a default organization client side

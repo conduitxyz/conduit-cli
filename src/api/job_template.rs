@@ -3,7 +3,8 @@ use uuid::Uuid;
 
 use crate::api::ExFac;
 use crate::types::{
-    CreateJobTemplateRequest, CreateJobTemplateResponse, GetJobTemplatesRequest, GetJobTemplatesResponse
+    CreateJobTemplateRequest, CreateJobTemplateResponse, GetJobTemplatesRequest,
+    GetJobTemplatesResponse,
 };
 
 use eyre::Result;
@@ -60,7 +61,10 @@ impl ExFac {
     }
 
     /// Creates a new network for the provided options.
-    pub async fn create_or_update_job_template(&self, opts: CreateOpts) -> Result<CreateJobTemplateResponse> {
+    pub async fn create_or_update_job_template(
+        &self,
+        opts: CreateOpts,
+    ) -> Result<CreateJobTemplateResponse> {
         let url = format!("{}/createOrUpdate", self.opts.job_template());
         let mut job_template = opts.job_template.to_string();
         if job_template == "00000000-0000-0000-0000-000000000000" {
@@ -70,7 +74,7 @@ impl ExFac {
             url,
             CreateJobTemplateRequest {
                 organization: opts.organization.to_string(),
-                job_template: job_template,
+                job_template,
                 repository: opts.repository,
                 prepare_command: opts.prepare_command,
                 default_command: opts.default_command,
