@@ -8,7 +8,7 @@ use eyre::Result;
 
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.
-pub struct CreateOpts {
+pub struct AssignOpts {
     /// The organization you want to create a job for.
     #[clap(short, long)]
     organization: Uuid,
@@ -50,7 +50,7 @@ pub struct CreateOpts {
 impl ExFac {
     /// Creates a new network for the provided options.
     #[tracing::instrument(skip(self, opts))]
-    pub async fn assign(&self, opts: CreateOpts) -> Result<CreateJobResponse> {
+    pub async fn assign(&self, opts: AssignOpts) -> Result<CreateJobResponse> {
         tracing::debug!(?opts, "assigning job");
         let url = format!("{}/create", self.opts.job());
         let use_default_command = opts.execute_command.is_none();

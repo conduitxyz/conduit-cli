@@ -8,7 +8,7 @@ use crate::api::{job_template::CreateOpts, ExFac};
 // TODO: Should the user set a default organization client side
 // in some config when they auth, instead of having to specify it all the time?
 // And maybe make it part of ExFac config?
-pub struct JobTemplateArgs {
+pub struct Args {
     #[clap(subcommand)]
     sub: Subcommands,
 }
@@ -28,7 +28,7 @@ pub enum Subcommands {
     CreateOrUpdate(CreateOpts),
 }
 
-impl JobTemplateArgs {
+impl Args {
     pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
         match self.sub {
             Subcommands::List { organization } => {

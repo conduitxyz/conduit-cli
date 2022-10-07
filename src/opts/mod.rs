@@ -32,11 +32,11 @@ pub enum Subcommands {
     },
 
     #[clap(alias = "u")]
-    User(user::UserArgs),
+    User(user::Args),
 
     #[clap(alias = "jt")]
-    JobTemplate(job_template::JobTemplateArgs),
+    JobTemplate(job_template::Args),
 
     #[clap(alias = "j")]
-    Job(job::JobArgs),
+    Job(job::Args),
 }

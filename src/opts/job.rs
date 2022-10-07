@@ -1,8 +1,8 @@
-use crate::api::{job::CreateOpts, ExFac};
+use crate::api::{job::AssignOpts, ExFac};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
-pub struct JobArgs {
+pub struct Args {
     #[clap(subcommand)]
     sub: Subcommands,
 }
@@ -12,10 +12,10 @@ pub struct JobArgs {
 #[allow(clippy::large_enum_variant)]
 pub enum Subcommands {
     /// Creates or updates a job
-    Assign(CreateOpts),
+    Assign(AssignOpts),
 }
 
-impl JobArgs {
+impl Args {
     pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
         match self.sub {
             Subcommands::Assign(opts) => {
