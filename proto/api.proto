@@ -205,10 +205,6 @@ message CreateJobRequest {
 
     JobType type = 9;
     string schedule = 10; // Only used for JobType.OnSchedule
-
-    // Overwrites executeCommand and uses the default command from the
-    // job_template
-    bool useDefaultCommand = 11;
 }
 
 message CreateJobResponse {
@@ -287,29 +283,4 @@ message GetJobRunStatusRequest {
 
 message GetJobRunStatusResponse {
     JobRun run = 1;
-}
-
-message APIKey {
-    string key = 1;
-    double created = 2;
-}
-
-message GenerateAPIKeyRequest {
-    string organization = 1;
-}
-
-message GenerateAPIKeyResponse {
-    APIKey key = 1;
-}
-
-message DeleteAPIKeyRequest {
-    APIKey key = 1;
-}
-
-message GetAPIKeysRequest {
-    string organization = 1;
-}
-
-message GetAPIKeysResponse{
-    repeated APIKey keys = 1;
 }

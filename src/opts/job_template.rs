@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 use std::fmt::Write;
 use uuid::Uuid;
 
-use crate::api::{job_template::CreateOpts, ExFac};
+use crate::api::{job_template::CreateOpts, ClientError, ExFac};
 
 #[derive(Debug, Parser)]
 // TODO: Should the user set a default organization client side
@@ -19,7 +19,7 @@ pub struct Args {
 pub enum Subcommands {
     /// Lists all job templates under the provided organization.
     List {
-        #[clap(short, long)]
+        #[clap(env, short, long)]
         /// The organization you want to list job templates for.
         organization: Uuid,
     },
@@ -44,8 +44,18 @@ impl Args {
                 }
             }
             Subcommands::CreateOrUpdate(opts) => {
-                let resp = exfac.create_or_update_job_template(opts).await?;
-                println!("{}", serde_json::to_string(&resp)?);
+                match exfac.create_or_update_job_template(&opts).await {
+                    Ok(resp) => println!(
+                        "Job template {} created.\nResponse: {}",
+                        opts.name,
+                        serde_json::to_string_pretty(&resp)?
+                    ),
+                    Err(ClientError::EmptyResponse) => println!(
+                        "Job Template with name \"{}\" already exists. Try changing the name.",
+                        opts.name
+                    ),
+                    Err(err) => eyre::bail!(err),
+                }
             }
         }
         Ok(())

@@ -100,6 +100,10 @@ impl ExFac {
 #[derive(thiserror::Error, Debug)]
 /// Error thrown when sending an HTTP request
 pub enum ClientError {
+    #[error("Client tried to create a new template without specifying a repository to clone.")]
+    NoRepository,
+    #[error("Client tried to update the default template 00000000-0000-0000-0000-000000000000. Use another id")]
+    DefaultUuid,
     #[error("Server returned empty response")]
     EmptyResponse,
     /// Thrown if the request failed

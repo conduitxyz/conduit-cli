@@ -7,6 +7,8 @@ use crate::types::{
     GetJobTemplatesResponse,
 };
 
+use super::ClientError;
+
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.
 pub struct CreateOpts {
@@ -16,33 +18,28 @@ pub struct CreateOpts {
 
     /// The id of the job template we're creating or updating. By default we'll auto-generate
     /// an id for you. If you want to update an existing job template, you can pass its id in here.
-    #[clap(
-        env,
-        short,
-        long,
-        default_value = "00000000-0000-0000-0000-000000000000"
-    )]
-    job_template: Uuid,
+    #[clap(env, short, long)]
+    job_template: Option<Uuid>,
 
     /// The link to the public git repository to clone for this job template
     #[clap(short, long)]
-    repository: String,
+    repository: Option<String>,
 
     /// The script to call that prepares the repository to run the command you want to run
     /// e.g. installing dependencies, compiling contracts
-    #[clap(short, long)]
+    #[clap(short, long, default_value = "")]
     prepare_command: String,
 
     /// The default command that will be used, if not overridden, when assigning jobs from this template
-    #[clap(short = 'c', long)]
+    #[clap(short = 'c', long, default_value = "")]
     default_command: String,
 
     /// The name of the job template
-    #[clap(short, long)]
-    name: String,
+    #[clap(short, long, default_value = "")]
+    pub name: String,
 
     /// The description for this job template
-    #[clap(short, long)]
+    #[clap(short, long, default_value = "")]
     description: String,
 
     /// The image url to be used in when this template is displayed in the UI
@@ -66,24 +63,33 @@ impl ExFac {
     /// Creates a new network for the provided options.
     pub async fn create_or_update_job_template(
         &self,
-        opts: CreateOpts,
+        opts: &CreateOpts,
     ) -> Result<CreateJobTemplateResponse> {
+        const EMPTY: Uuid = Uuid::nil();
         let url = format!("{}/createOrUpdate", self.opts.job_template());
-        let mut job_template = opts.job_template.to_string();
-        if job_template == "00000000-0000-0000-0000-000000000000" {
-            job_template = Uuid::new_v4().to_string();
-        }
+
+        let (job_template, repository) = match opts.job_template {
+            Some(EMPTY) => return Err(ClientError::DefaultUuid),
+            Some(inner) => (inner, opts.repository.to_owned().unwrap_or_default()),
+            None => (
+                Uuid::new_v4(),
+                opts.repository
+                    .to_owned()
+                    .ok_or(ClientError::NoRepository)?,
+            ),
+        };
+
         self.post(
             url,
             CreateJobTemplateRequest {
                 organization: opts.organization.to_string(),
-                job_template,
-                repository: opts.repository,
-                prepare_command: opts.prepare_command,
-                default_command: opts.default_command,
-                name: opts.name,
-                description: opts.description,
-                image_url: opts.image_url,
+                job_template: job_template.to_string(),
+                repository,
+                prepare_command: opts.prepare_command.to_owned(),
+                default_command: opts.default_command.to_owned(),
+                name: opts.name.to_owned(),
+                description: opts.description.to_owned(),
+                image_url: opts.image_url.to_owned(),
             },
         )
         .await
