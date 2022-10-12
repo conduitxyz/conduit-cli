@@ -15,16 +15,6 @@ pub struct AssignOpts {
     #[clap(env, long)]
     template: Uuid,
 
-    /// The id of the job we're going to create. By default we'll auto-generate an id
-    /// for you, but you can also manually specify this to update an existing job.
-    #[clap(
-        env,
-        short,
-        long,
-        default_value = "00000000-0000-0000-0000-000000000000"
-    )]
-    job: Uuid,
-
     /// The id of the network to assign this job to
     #[clap(env, long)]
     network: Uuid,
@@ -58,13 +48,12 @@ impl ExFac {
     pub async fn assign(&self, opts: AssignOpts) -> Result<CreateJobResponse> {
         tracing::debug!(?opts, "assigning job");
         let url = format!("{}/create", self.opts.job());
-        let use_default_command = opts.execute_command.is_none();
         self.post(
             url,
             CreateJobRequest {
                 organization: opts.organization.to_string(),
                 job_template: opts.template.to_string(),
-                job: opts.job.to_string(),
+                job: Uuid::new_v4().to_string(),
                 testnet: opts.network.to_string(),
                 execute_command: opts.execute_command.unwrap_or_default(),
                 name: opts.name,
@@ -72,7 +61,6 @@ impl ExFac {
                 r#type: opts.r#type,
                 schedule: "".to_owned(),
                 variables: opts.env,
-                use_default_command,
             },
         )
         .await
