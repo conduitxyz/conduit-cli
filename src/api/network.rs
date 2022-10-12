@@ -1,7 +1,7 @@
 use clap::Parser;
 use uuid::Uuid;
 
-use crate::api::ExFac;
+use crate::api::{ExFac, Result};
 use crate::types::{
     create_testnet_options::Mining, CreateJobRequest, CreateTestnetOptions, CreateTestnetRequest,
     CreateTestnetResponse, DeploymentType,
@@ -9,8 +9,6 @@ use crate::types::{
 use crate::types::{
     DeleteTestnetRequest, DeleteTestnetResponse, ListTestnetsRequest, ListTestnetsResponse,
 };
-
-use eyre::Result;
 
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.
@@ -56,12 +54,12 @@ pub struct CreateOpts {
 /// Options for calling the /delete endpoint on the API.
 pub struct DeleteOpts {
     /// The organization you want to delete a network for.
-    #[clap(short, long)]
+    #[clap(env, short, long)]
     pub organization: Uuid,
 
     /// The name of the network you are deleting.
-    #[clap(short, long)]
-    pub name: Uuid,
+    #[clap(env, short, long)]
+    pub network: Uuid,
 }
 
 impl ExFac {
@@ -112,14 +110,14 @@ impl ExFac {
     pub async fn delete_network(
         &self,
         organization: Uuid,
-        name: Uuid,
+        network: Uuid,
     ) -> Result<DeleteTestnetResponse> {
         let url = format!("{}/delete", self.opts.network());
         self.post(
             url,
             DeleteTestnetRequest {
                 organization: organization.to_string(),
-                testnet: name.to_string(),
+                testnet: network.to_string(),
             },
         )
         .await

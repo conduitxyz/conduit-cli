@@ -1,13 +1,11 @@
 use clap::Parser;
 use uuid::Uuid;
 
-use crate::api::ExFac;
+use crate::api::{ExFac, Result};
 use crate::types::{
     CreateJobTemplateRequest, CreateJobTemplateResponse, GetJobTemplatesRequest,
     GetJobTemplatesResponse,
 };
-
-use eyre::Result;
 
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.

@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::api::{
     network::{CreateOpts, DeleteOpts},
-    ExFac,
+    ClientError, ExFac,
 };
 
 #[derive(Debug, Parser)]
@@ -54,8 +54,13 @@ impl NetworkArgs {
                 println!("{}", serde_json::to_string(&resp)?);
             }
             Subcommands::Delete(opts) => {
-                exfac.delete_network(opts.organization, opts.name).await?;
-                println!("Network {} deleted", opts.name);
+                match exfac
+                    .delete_network(opts.organization, opts.network)
+                    .await {
+                        Ok(_) => println!("Network {} deleted", opts.network),
+                        Err(ClientError::EmptyResponse) => println!("Network not found. Did you already delete it? Is there a typo in your network id?"),
+                        Err(err) => eyre::bail!(err)
+                    }
             }
         }
         Ok(())

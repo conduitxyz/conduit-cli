@@ -4,7 +4,6 @@ use config::ExFacOpts;
 pub mod job;
 pub mod job_template;
 pub mod network;
-use eyre::Result;
 use reqwest::Client;
 
 use crate::types::LoadUserResponse;
@@ -16,6 +15,8 @@ pub struct ExFac {
     client: Client,
     opts: ExFacOpts,
 }
+
+type Result<T> = std::result::Result<T, ClientError>;
 
 impl ExFac {
     /// Instantiates a client from the provided opts.
@@ -83,6 +84,10 @@ impl ExFac {
         let body = res.bytes().await?;
         tracing::trace!(resp = ?String::from_utf8_lossy(&body), "rx");
 
+        if body == "{}" {
+            return Err(ClientError::EmptyResponse);
+        }
+
         let res = serde_json::from_slice(&body).map_err(|err| ClientError::SerdeJson {
             err,
             text: String::from_utf8_lossy(&body).to_string(),
@@ -95,6 +100,8 @@ impl ExFac {
 #[derive(thiserror::Error, Debug)]
 /// Error thrown when sending an HTTP request
 pub enum ClientError {
+    #[error("Server returned empty response")]
+    EmptyResponse,
     /// Thrown if the request failed
     #[error("Deserialization Error: {err}. Response: {text}")]
     /// Serde JSON Error
@@ -102,4 +109,6 @@ pub enum ClientError {
         err: serde_json::Error,
         text: String,
     },
+    #[error(transparent)]
+    Reqwest(#[from] reqwest::Error),
 }
