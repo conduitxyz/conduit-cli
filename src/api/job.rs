@@ -10,20 +10,25 @@ use eyre::Result;
 /// Options for calling the /create endpoint on the API.
 pub struct AssignOpts {
     /// The organization you want to create a job for.
-    #[clap(short, long)]
+    #[clap(env, short, long)]
     organization: Uuid,
 
     /// The id of the job template we're using as a base
-    #[clap(long)]
+    #[clap(env, long)]
     template: Uuid,
 
     /// The id of the job we're going to create. By default we'll auto-generate an id
     /// for you, but you can also manually specify this to update an existing job.
-    #[clap(short, long, default_value = "00000000-0000-0000-0000-000000000000")]
+    #[clap(
+        env,
+        short,
+        long,
+        default_value = "00000000-0000-0000-0000-000000000000"
+    )]
     job: Uuid,
 
     /// The id of the network to assign this job to
-    #[clap(long)]
+    #[clap(env, long)]
     network: Uuid,
 
     /// The command that will be executed in the job. Will use the
@@ -42,6 +47,8 @@ pub struct AssignOpts {
     #[clap(short, long, default_value = "2")]
     r#type: i32,
 
+    /// A semi-colon separated list of key-value pairs, e.g "--env key:val key2:val2"
+    /// which get passed on to the called script as envirnoment variables (case sensitive)
     #[clap(long, num_args(0..))]
     env: Vec<EnvironmentVariable>,
 }

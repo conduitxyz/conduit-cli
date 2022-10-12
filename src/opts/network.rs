@@ -22,7 +22,7 @@ pub struct NetworkArgs {
 pub enum Subcommands {
     /// Lists all networks under the provided organization.
     List {
-        #[clap(short, long)]
+        #[clap(env, short, long)]
         /// The organization you want to list networks for.
         organization: Uuid,
     },

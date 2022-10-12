@@ -13,12 +13,17 @@ use eyre::Result;
 /// Options for calling the /create endpoint on the API.
 pub struct CreateOpts {
     /// The organization you want to create a network for.
-    #[clap(short, long)]
+    #[clap(env, short, long)]
     organization: Uuid,
 
     /// The id of the job template we're creating or updating. By default we'll auto-generate
     /// an id for you. If you want to update an existing job template, you can pass its id in here.
-    #[clap(short, long, default_value = "00000000-0000-0000-0000-000000000000")]
+    #[clap(
+        env,
+        short,
+        long,
+        default_value = "00000000-0000-0000-0000-000000000000"
+    )]
     job_template: Uuid,
 
     /// The link to the public git repository to clone for this job template

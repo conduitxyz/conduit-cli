@@ -16,11 +16,11 @@ use eyre::Result;
 /// Options for calling the /create endpoint on the API.
 pub struct CreateOpts {
     /// The organization you want to create a network for.
-    #[clap(short, long)]
+    #[clap(env, short, long)]
     organization: Uuid,
 
     /// The name of the network you are creating.
-    #[clap(short, long)]
+    #[clap(env, short, long)]
     name: String,
 
     /// The chain-id of the network
