@@ -15,39 +15,39 @@ use crate::types::{
 pub struct CreateOpts {
     /// The organization you want to create a network for.
     #[clap(env, short, long)]
-    organization: Uuid,
+    pub organization: Uuid,
 
     /// The name of the network you are creating.
     #[clap(env, short, long)]
-    name: String,
+    pub name: String,
 
     /// The chain-id of the network
     #[clap(short, long, default_value = "888")]
-    chain_id: usize,
+    pub chain_id: usize,
 
     /// The memory you want to allocate (in MB)
     #[clap(short, long, default_value = "20000")]
-    memory: usize,
+    pub memory: usize,
 
     /// The memory you want to allocate (in MB)
     #[clap(long, default_value = "1")]
-    cpu: usize,
+    pub cpu: usize,
 
     /// URL to remote network to fork off. ONLY available in Anvil.
     #[clap(short, long, default_value = "")]
-    fork_url: String,
+    pub fork_url: String,
 
     /// Block number to fork off. ONLY available in Anvil.
     #[clap(long, default_value = "0")]
-    fork_block: usize,
+    pub fork_block: usize,
 
     /// Choose your deployment type.
     #[clap(long, default_value = "DEPLOYMENTTYPE_ANVIL")]
-    deployment_type: DeploymentType,
+    pub deployment_type: DeploymentType,
 
     /// Optionally set the block time. If not provided, will insta-mine.
     #[clap(long)]
-    block_time: Option<usize>,
+    pub block_time: Option<usize>,
 }
 
 #[derive(Debug, Parser)]
@@ -76,7 +76,7 @@ impl ExFac {
     }
 
     /// Creates a new network for the provided options.
-    pub async fn create_network(&self, opts: CreateOpts) -> Result<CreateTestnetResponse> {
+    pub async fn create_network(&self, opts: &CreateOpts) -> Result<CreateTestnetResponse> {
         let url = format!("{}/create", self.opts.network());
         self.post(
             url,
@@ -84,8 +84,8 @@ impl ExFac {
                 organization: opts.organization.to_string(),
                 testnet: Uuid::new_v4().to_string(),
                 opts: Some(CreateTestnetOptions {
-                    name: opts.name,
-                    fork_url: opts.fork_url,
+                    name: opts.name.to_owned(),
+                    fork_url: opts.fork_url.to_owned(),
                     fork_block_number: opts.fork_block as i64,
                     genesis_json: "".to_string(),
                     gas_limit: 30_000_000,

@@ -84,7 +84,7 @@ impl ExFac {
         let body = res.bytes().await?;
         tracing::trace!(resp = ?String::from_utf8_lossy(&body), "rx");
 
-        if body == "{}" {
+        if body == "{}" || body.is_empty() {
             return Err(ClientError::EmptyResponse);
         }
 

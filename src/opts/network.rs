@@ -49,10 +49,18 @@ impl NetworkArgs {
                     println!("{}", table);
                 }
             }
-            Subcommands::Create(opts) => {
-                let resp = exfac.create_network(opts).await?;
-                println!("{}", serde_json::to_string(&resp)?);
-            }
+            Subcommands::Create(opts) => match exfac.create_network(&opts).await {
+                Ok(resp) => println!(
+                    "Network {} created\nResponse: {}",
+                    opts.name,
+                    serde_json::to_string_pretty(&resp)?
+                ),
+                Err(ClientError::EmptyResponse) => println!(
+                    "Network with name {} already exists. Try changing the name.",
+                    opts.name
+                ),
+                Err(err) => eyre::bail!(err),
+            },
             Subcommands::Delete(opts) => {
                 match exfac
                     .delete_network(opts.organization, opts.network)
