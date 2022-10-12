@@ -28,7 +28,7 @@ impl ExFacOpts {
     }
 
     pub fn job(&self) -> String {
-        format!("{}/v1/jobs", self.url)
+        format!("{}/v1/job", self.url)
     }
 
     // Returns the user slug.
