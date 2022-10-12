@@ -1,4 +1,7 @@
-use crate::api::{job::AssignOpts, ExFac};
+use crate::api::{
+    job::{AssignOpts, ListOpts, StatusOpts},
+    ExFac,
+};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -13,6 +16,11 @@ pub struct Args {
 pub enum Subcommands {
     /// Creates or updates a job
     Assign(AssignOpts),
+    /// Lists all historical jobs for the specified org/network
+    List(ListOpts),
+    /// Gets the status of a specified job (can be any of the historical ones, or any ones running
+    /// at the moment)
+    Status(StatusOpts),
 }
 
 impl Args {
@@ -20,6 +28,14 @@ impl Args {
         match self.sub {
             Subcommands::Assign(opts) => {
                 let resp = exfac.assign(opts).await?;
+                println!("{}", serde_json::to_string(&resp)?);
+            }
+            Subcommands::List(opts) => {
+                let resp = exfac.list(opts).await?;
+                println!("{}", serde_json::to_string(&resp)?);
+            }
+            Subcommands::Status(opts) => {
+                let resp = exfac.status(opts).await?;
                 println!("{}", serde_json::to_string(&resp)?);
             }
         }

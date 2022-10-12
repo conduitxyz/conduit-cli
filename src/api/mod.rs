@@ -84,9 +84,10 @@ impl ExFac {
         let body = res.bytes().await?;
         tracing::trace!(resp = ?String::from_utf8_lossy(&body), "rx");
 
-        if body == "{}" || body.is_empty() {
-            return Err(ClientError::EmptyResponse);
-        }
+        // TODO: Make this more reliable.
+        // if body == "{}" || body.is_empty() {
+        //     return Err(ClientError::EmptyResponse);
+        // }
 
         let res = serde_json::from_slice(&body).map_err(|err| ClientError::SerdeJson {
             err,

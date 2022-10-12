@@ -62,13 +62,11 @@ impl NetworkArgs {
                 Err(err) => eyre::bail!(err),
             },
             Subcommands::Delete(opts) => {
-                match exfac
-                    .delete_network(opts.organization, opts.network)
-                    .await {
-                        Ok(_) => println!("Network {} deleted", opts.network),
-                        Err(ClientError::EmptyResponse) => println!("Network not found. Did you already delete it? Is there a typo in your network id?"),
-                        Err(err) => eyre::bail!(err)
-                    }
+                match exfac.delete_network(opts.organization, opts.network).await {
+                    Ok(_) => println!("Network {} deleted", opts.network),
+                    // Err(ClientError::EmptyResponse) => println!("Network not found. Did you already delete it? Is there a typo in your network id?"),
+                    Err(err) => eyre::bail!(err),
+                }
             }
         }
         Ok(())
