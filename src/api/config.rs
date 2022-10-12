@@ -15,7 +15,7 @@ pub struct ExFacOpts {
 impl ExFacOpts {
     // Returns the network slug.
     pub fn network(&self) -> String {
-        format!("{}/v1/testnet", self.url)
+        format!("{}/v1/network", self.url)
     }
 
     pub fn job_template(&self) -> String {
