@@ -22,7 +22,10 @@ async fn main() -> eyre::Result<()> {
     utils::subscriber();
     utils::enable_paint();
 
-    let opts = Opts::parse();
+    let mut opts = Opts::parse();
+    if opts.api.api_key.is_empty() {
+        opts.api.api_key = std::fs::read_to_string(exfac::config_dir().join("api-key"))?;
+    }
     tracing::debug!(?opts);
     let exfac = ExFac::new(opts.api);
 
@@ -61,6 +64,7 @@ async fn main() -> eyre::Result<()> {
         Subcommands::User(args) => args.run(exfac).await?,
         Subcommands::JobTemplate(args) => args.run(exfac).await?,
         Subcommands::Job(args) => args.run(exfac).await?,
+        Subcommands::Login(args) => args.run().await?,
     }
 
     Ok(())

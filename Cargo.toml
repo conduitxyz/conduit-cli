@@ -31,6 +31,9 @@ color-eyre = "0.6.2"
 prost = "0.11.0"
 prost-types = "0.11.1"
 thiserror = "1.0.37"
+axum = "0.5.16"
+hyper = "0.14.20"
+dirs-next = "2.0.0"
 
 [build-dependencies]
 vergen = "7.4.2"
