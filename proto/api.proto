@@ -284,3 +284,28 @@ message GetJobRunStatusRequest {
 message GetJobRunStatusResponse {
     JobRun run = 1;
 }
+
+message APIKey {
+    string key = 1;
+    double created = 2;
+}
+
+message GenerateAPIKeyRequest {
+    string organization = 1;
+}
+
+message GenerateAPIKeyResponse {
+    APIKey key = 1;
+}
+
+message DeleteAPIKeyRequest {
+    APIKey key = 1;
+}
+
+message GetAPIKeysRequest {
+    string organization = 1;
+}
+
+message GetAPIKeysResponse{
+    repeated APIKey keys = 1;
+}
