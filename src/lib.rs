@@ -8,6 +8,14 @@ pub mod handler;
 pub mod opts;
 pub mod utils;
 
+pub const EXFAC_DIR_NAME: &str = ".exfac";
+pub fn config_dir() -> std::path::PathBuf {
+    dirs_next::home_dir()
+        .expect("could not make config dir")
+        .join(EXFAC_DIR_NAME)
+        .join("auth")
+}
+
 // Generate the protobuf types.
 pub mod types {
     include!(concat!(env!("OUT_DIR"), "/api.rs"));

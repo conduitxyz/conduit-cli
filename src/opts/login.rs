@@ -1,17 +1,11 @@
+use crate::config_dir;
 use clap::Parser;
 
 use axum::{body::Body, http::Request, routing::post, Router};
-use std::{net::SocketAddr, path::PathBuf};
+use std::net::SocketAddr;
 use tokio::sync::mpsc::UnboundedReceiver;
 
 use crate::types::ApiKey;
-
-pub const EXFAC_DIR_NAME: &str = ".exfac";
-pub fn config_dir() -> PathBuf {
-    dirs_next::home_dir()
-        .map(|p| p.join(EXFAC_DIR_NAME))
-        .expect("could not make config dir")
-}
 
 #[derive(Debug, Parser)]
 pub struct Args {
@@ -52,7 +46,7 @@ impl Args {
 }
 
 async fn signal(mut rx: UnboundedReceiver<ApiKey>) {
-    let config_dir = config_dir().join("auth");
+    let config_dir = config_dir();
     if !config_dir.exists() {
         std::fs::create_dir_all(&config_dir).expect("could not create the config directory");
     }
