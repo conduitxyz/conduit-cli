@@ -4,7 +4,7 @@ use clap::Parser;
 /// Parameters for auth'ing and connecting to the ExFac API.
 pub struct ExFacOpts {
     // TODO: Remove default value.
-    #[clap(env, long, short)]
+    #[clap(env, long, short, default_value = "")]
     /// Your ExFac API key.
     pub api_key: String,
     #[clap(env, long, short, default_value = "https://api.exfac.xyz")]

@@ -61,6 +61,7 @@ async fn main() -> eyre::Result<()> {
         Subcommands::User(args) => args.run(exfac).await?,
         Subcommands::JobTemplate(args) => args.run(exfac).await?,
         Subcommands::Job(args) => args.run(exfac).await?,
+        Subcommands::Login(args) => args.run().await?,
     }
 
     Ok(())

@@ -3,6 +3,7 @@ use clap::{Parser, Subcommand};
 
 mod job;
 mod job_template;
+mod login;
 mod network;
 mod user;
 
@@ -39,4 +40,7 @@ pub enum Subcommands {
 
     #[clap(alias = "j")]
     Job(job::Args),
+
+    #[clap(alias = "l")]
+    Login(login::Args),
 }
