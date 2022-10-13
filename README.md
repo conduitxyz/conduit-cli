@@ -6,7 +6,9 @@
 
 ### Onboarding
 
-First, create an API Key from the [Web UI](https://app.exfac.xyz). Then run `conduit user`, and retrieve the `organization` field.
+First, get your API Key by running `conduit login`, which will prompt you to log in via the website.
+
+Then, run `conduit user`, and retrieve the `organization` field.
 
 ```
 export API_KEY=<...>
