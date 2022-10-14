@@ -23,8 +23,11 @@ async fn main() -> eyre::Result<()> {
     utils::enable_paint();
 
     let mut opts = Opts::parse();
-    if opts.api.api_key.is_empty() {
-        opts.api.api_key = std::fs::read_to_string(exfac::config_dir().join("api-key"))?;
+    if opts.api.api_key.is_empty() && !matches!(opts.sub, Subcommands::Login(_)) {
+        opts.api.api_key = match std::fs::read_to_string(exfac::config_dir().join("api-key")) {
+            Ok(key) => key,
+            Err(_) => eyre::bail!("No API Key found. Either login via `conduit login` or provide `--api-key` (or set via env var `API_KEY`)")
+        };
     }
     tracing::debug!(?opts);
     let exfac = ExFac::new(opts.api);
