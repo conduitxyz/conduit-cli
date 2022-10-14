@@ -205,6 +205,8 @@ message CreateJobRequest {
 
     JobType type = 9;
     string schedule = 10; // Only used for JobType.OnSchedule
+
+    bool useDefaultCommand = 11;
 }
 
 message CreateJobResponse {
@@ -308,4 +310,10 @@ message GetAPIKeysRequest {
 
 message GetAPIKeysResponse{
     repeated APIKey keys = 1;
+}
+
+message CLIAuthResponse {
+    string key = 1;
+    double created = 2;
+    repeated string organizations = 3;
 }

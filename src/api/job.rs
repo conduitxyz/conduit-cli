@@ -28,7 +28,7 @@ pub struct AssignOpts {
     execute_command: Option<String>,
 
     /// The name of the job
-    #[clap(short, long)]
+    #[clap(short, long, default_value = "")]
     name: String,
 
     /// The description for this job
@@ -76,6 +76,7 @@ impl ExFac {
     #[tracing::instrument(skip(self, opts))]
     pub async fn assign(&self, opts: AssignOpts) -> Result<CreateJobResponse> {
         tracing::debug!(?opts, "assigning job");
+        
         let url = format!("{}/create", self.opts.job());
         self.post(
             url,
@@ -84,12 +85,13 @@ impl ExFac {
                 job_template: opts.template.to_string(),
                 job: Uuid::new_v4().to_string(),
                 testnet: opts.network.to_string(),
-                execute_command: opts.execute_command.unwrap_or_default(),
+                execute_command: opts.execute_command.clone().unwrap_or_default(),
                 name: opts.name,
                 description: opts.description,
                 r#type: opts.r#type,
                 schedule: "".to_owned(),
                 variables: opts.env,
+                use_default_command: opts.execute_command.clone().unwrap_or_default() == "",
             },
         )
         .await

@@ -6,6 +6,7 @@ mod job_template;
 mod login;
 mod network;
 mod user;
+mod organization;
 
 #[derive(Debug, Parser)]
 #[clap(name = "exfac", version = crate::utils::VERSION_MESSAGE)]
@@ -43,4 +44,7 @@ pub enum Subcommands {
 
     #[clap(alias = "l")]
     Login(login::Args),
+
+    #[clap(alias = "o")]
+    Organization(organization::OrganizationArgs),
 }

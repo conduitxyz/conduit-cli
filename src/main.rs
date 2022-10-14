@@ -28,36 +28,13 @@ async fn main() -> eyre::Result<()> {
             Ok(key) => key,
             Err(_) => eyre::bail!("No API Key found. Either login via `conduit login` or provide `--api-key` (or set via env var `API_KEY`)")
         };
+        opts.api.organization = match std::fs::read_to_string(exfac::config_dir().join("organization")) {
+            Ok(key) => key,
+            Err(_) => eyre::bail!("No Organization found. Either login via `conduit login` or provide `--organization` (or set via env var `ORGANIZATION`)")
+        };
     }
     tracing::debug!(?opts);
     let exfac = ExFac::new(opts.api);
-
-    /*
-    // Now get the default organization
-    let mut home_dir = dirs::home_dir()
-    .unwrap();
-
-    home_dir::push(".conduit/config".to_owned());
-    let mut config_file_path = home_dir.into_os_string().into_string().unwrap();
-
-    let mut fileExists = File::open(config_file_path);
-    if fileExists.is_err() {
-        File::create(config_file_path)?;
-    }
-
-    let settings = Config::builder()
-        .add_source(config::File::with_name(config_file_path));
-
-    let mut defaultOrganization = settings.get_string("organization".to_owned());
-    if defaultOrganization.is_err() {
-        // Fetch and save the default organization
-        let user = Subcommands::User::UserArgs.run(exfac).await?
-        // Pick the first org as the default org
-        defaultOrganization = user.organizations[0].organization
-        let file = File::open(config_file_path)?
-
-    }
-    */
 
     match opts.sub {
         Subcommands::Completions { shell } => {
@@ -68,6 +45,7 @@ async fn main() -> eyre::Result<()> {
         Subcommands::JobTemplate(args) => args.run(exfac).await?,
         Subcommands::Job(args) => args.run(exfac).await?,
         Subcommands::Login(args) => args.run().await?,
+        Subcommands::Organization(args) => args.run().await?,
     }
 
     Ok(())
