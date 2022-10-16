@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand};
 use std::fmt::Write;
-use uuid::Uuid;
 
 use crate::api::{
     network::{CreateOpts, DeleteOpts},
@@ -20,12 +19,8 @@ pub struct NetworkArgs {
 /// Commands about interacting with the various networks you have spinned up
 #[allow(clippy::large_enum_variant)]
 pub enum Subcommands {
-    /// Lists all networks under the provided organization.
-    List {
-        #[clap(env, short, long)]
-        /// The organization you want to list networks for.
-        organization: Uuid,
-    },
+    /// Lists all networks.
+    List,
 
     /// Creates a new network.
     Create(CreateOpts),
@@ -37,8 +32,8 @@ pub enum Subcommands {
 impl NetworkArgs {
     pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
         match self.sub {
-            Subcommands::List { organization } => {
-                let resp = exfac.list_networks(organization).await?;
+            Subcommands::List => {
+                let resp = exfac.list_networks().await?;
                 for network in resp.testnets {
                     println!("Name: {}", &network.name);
                     let mut network = serde_json::to_value(&network)?;
@@ -62,7 +57,7 @@ impl NetworkArgs {
                 Err(err) => eyre::bail!(err),
             },
             Subcommands::Delete(opts) => {
-                match exfac.delete_network(opts.organization, opts.network).await {
+                match exfac.delete_network(opts.network).await {
                     Ok(_) => println!("Network {} deleted", opts.network),
                     // Err(ClientError::EmptyResponse) => println!("Network not found. Did you already delete it? Is there a typo in your network id?"),
                     Err(err) => eyre::bail!(err),

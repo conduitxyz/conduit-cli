@@ -28,11 +28,14 @@ async fn main() -> eyre::Result<()> {
             Ok(key) => key,
             Err(_) => eyre::bail!("No API Key found. Either login via `conduit login` or provide `--api-key` (or set via env var `API_KEY`)")
         };
+    }
+    if opts.api.organization.is_empty() && !matches!(opts.sub, Subcommands::Login(_)) {
         opts.api.organization = match std::fs::read_to_string(exfac::config_dir().join("organization")) {
             Ok(key) => key,
             Err(_) => eyre::bail!("No Organization found. Either login via `conduit login` or provide `--organization` (or set via env var `ORGANIZATION`)")
         };
     }
+    
     tracing::debug!(?opts);
     let exfac = ExFac::new(opts.api);
 

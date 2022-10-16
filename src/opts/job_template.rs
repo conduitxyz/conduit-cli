@@ -17,12 +17,8 @@ pub struct Args {
 /// Commands about interacting with the various job templates you have spinned up
 #[allow(clippy::large_enum_variant)]
 pub enum Subcommands {
-    /// Lists all job templates under the provided organization.
-    List {
-        #[clap(env, short, long)]
-        /// The organization you want to list job templates for.
-        organization: Uuid,
-    },
+    /// Lists all job templates.
+    List,
 
     /// Creates or updates a job template.
     CreateOrUpdate(CreateOpts),
@@ -31,8 +27,8 @@ pub enum Subcommands {
 impl Args {
     pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
         match self.sub {
-            Subcommands::List { organization } => {
-                let resp = exfac.list_job_templates(organization).await?;
+            Subcommands::List => {
+                let resp = exfac.list_job_templates().await?;
                 for job_template in resp.templates {
                     println!("Name: {}", &job_template.name);
                     let mut job_template = serde_json::to_value(&job_template)?;

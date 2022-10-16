@@ -11,7 +11,7 @@ pub struct ExFacOpts {
     /// The URL pointing to the ExFac API.
     pub url: String,
     /// The default organization to scope our API requests to.
-    #[clap(env, long, short, default_value = "")]
+    #[clap(env, long, short, default_value="")]
     pub organization: String,
 }
 

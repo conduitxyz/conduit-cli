@@ -10,10 +10,6 @@ use crate::types::{
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.
 pub struct AssignOpts {
-    /// The organization you want to create a job for.
-    #[clap(env, short, long)]
-    organization: Uuid,
-
     /// The id of the job template we're using as a base
     #[clap(env, long)]
     template: Uuid,
@@ -48,9 +44,6 @@ pub struct AssignOpts {
 #[derive(Debug, Parser)]
 /// Options for calling the /runs/all endpoint on the API.
 pub struct ListOpts {
-    /// The organization you want to list jobs for
-    #[clap(env, short, long)]
-    organization: Uuid,
     /// The network you want to list jobs for
     #[clap(env, long)]
     network: Uuid,
@@ -59,9 +52,6 @@ pub struct ListOpts {
 #[derive(Debug, Parser)]
 /// Options for calling the /runs/status endpoint on the API.
 pub struct StatusOpts {
-    /// The organization you want to list jobs for
-    #[clap(env, short, long)]
-    organization: Uuid,
     /// The job template uuid
     #[clap(env, long)]
     job: Uuid,
@@ -73,9 +63,6 @@ pub struct StatusOpts {
 #[derive(Debug, Parser)]
 /// Options for calling the /triggerOnDemand endpoint
 pub struct TriggerOpts {
-    /// The organization you want to list jobs for
-    #[clap(env, short, long)]
-    organization: Uuid,
     /// The job template uuid
     #[clap(env, long)]
     job: Uuid,
@@ -92,7 +79,7 @@ impl ExFac {
         self.post(
             url,
             CreateJobRequest {
-                organization: opts.organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 job_template: opts.template.to_string(),
                 job: Uuid::new_v4().to_string(),
                 testnet: opts.network.to_string(),
@@ -116,7 +103,7 @@ impl ExFac {
         self.post(
             url,
             GetAllJobRunsRequest {
-                organization: opts.organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 testnet: opts.network.to_string(),
             },
         )
@@ -131,7 +118,7 @@ impl ExFac {
         self.post(
             url,
             GetJobRunStatusRequest {
-                organization: opts.organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 job: opts.job.to_string(),
                 run: opts.run.to_string(),
             },
@@ -147,7 +134,7 @@ impl ExFac {
         self.post(
             url,
             TriggerOnDemandJobRequest {
-                organization: opts.organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 job: opts.job.to_string(),
             },
         )

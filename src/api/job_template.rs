@@ -12,10 +12,6 @@ use super::ClientError;
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.
 pub struct CreateOpts {
-    /// The organization you want to create a network for.
-    #[clap(env, short, long)]
-    organization: Uuid,
-
     /// The id of the job template we're creating or updating. By default we'll auto-generate
     /// an id for you. If you want to update an existing job template, you can pass its id in here.
     #[clap(env, short, long)]
@@ -49,12 +45,12 @@ pub struct CreateOpts {
 
 impl ExFac {
     /// Returns a list of all the networks under the provided organization.
-    pub async fn list_job_templates(&self, organization: Uuid) -> Result<GetJobTemplatesResponse> {
+    pub async fn list_job_templates(&self) -> Result<GetJobTemplatesResponse> {
         let url = format!("{}/list", self.opts.job_template());
         self.post(
             url,
             GetJobTemplatesRequest {
-                organization: organization.to_string(),
+                organization: self.opts.organization.to_string(),
             },
         )
         .await
@@ -82,7 +78,7 @@ impl ExFac {
         self.post(
             url,
             CreateJobTemplateRequest {
-                organization: opts.organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 job_template: job_template.to_string(),
                 repository,
                 prepare_command: opts.prepare_command.to_owned(),

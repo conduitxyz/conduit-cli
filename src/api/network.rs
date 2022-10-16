@@ -13,10 +13,6 @@ use crate::types::{
 #[derive(Debug, Parser)]
 /// Options for calling the /create endpoint on the API.
 pub struct CreateOpts {
-    /// The organization you want to create a network for.
-    #[clap(env, short, long)]
-    pub organization: Uuid,
-
     /// The name of the network you are creating.
     #[clap(env, short, long)]
     pub name: String,
@@ -53,10 +49,6 @@ pub struct CreateOpts {
 #[derive(Debug, Parser)]
 /// Options for calling the /delete endpoint on the API.
 pub struct DeleteOpts {
-    /// The organization you want to delete a network for.
-    #[clap(env, short, long)]
-    pub organization: Uuid,
-
     /// The name of the network you are deleting.
     #[clap(env, short, long)]
     pub network: Uuid,
@@ -64,12 +56,12 @@ pub struct DeleteOpts {
 
 impl ExFac {
     /// Returns a list of all the networks under the provided organization.
-    pub async fn list_networks(&self, organization: Uuid) -> Result<ListTestnetsResponse> {
+    pub async fn list_networks(&self) -> Result<ListTestnetsResponse> {
         let url = format!("{}/list", self.opts.network());
         self.post(
             url,
             ListTestnetsRequest {
-                organization: organization.to_string(),
+                organization: self.opts.organization.to_string(),
             },
         )
         .await
@@ -81,7 +73,7 @@ impl ExFac {
         self.post(
             url,
             CreateTestnetRequest {
-                organization: opts.organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 testnet: Uuid::new_v4().to_string(),
                 opts: Some(CreateTestnetOptions {
                     name: opts.name.to_owned(),
@@ -109,14 +101,13 @@ impl ExFac {
     /// Deletes a network of your choice.
     pub async fn delete_network(
         &self,
-        organization: Uuid,
         network: Uuid,
     ) -> Result<DeleteTestnetResponse> {
         let url = format!("{}/delete", self.opts.network());
         self.post(
             url,
             DeleteTestnetRequest {
-                organization: organization.to_string(),
+                organization: self.opts.organization.to_string(),
                 testnet: network.to_string(),
             },
         )
