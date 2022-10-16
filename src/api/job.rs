@@ -3,8 +3,8 @@ use uuid::Uuid;
 
 use crate::api::{ExFac, Result};
 use crate::types::{
-    CreateJobRequest, CreateJobResponse, EnvironmentVariable, GetAllJobRunsRequest,
-    GetAllJobRunsResponse, GetJobRunStatusRequest, GetJobRunStatusResponse,
+    CreateJobRequest, CreateJobResponse, EnvironmentVariable, GetAllJobRunsRequest, TriggerOnDemandJobRequest,
+    GetAllJobRunsResponse, GetJobRunStatusRequest, GetJobRunStatusResponse, TriggerOnDemandJobResponse
 };
 
 #[derive(Debug, Parser)]
@@ -70,6 +70,17 @@ pub struct StatusOpts {
     run: Uuid,
 }
 
+#[derive(Debug, Parser)]
+/// Options for calling the /triggerOnDemand endpoint
+pub struct TriggerOpts {
+    /// The organization you want to list jobs for
+    #[clap(env, short, long)]
+    organization: Uuid,
+    /// The job template uuid
+    #[clap(env, long)]
+    job: Uuid,
+}
+
 // TODO: Investigate whether we want to split in pure create/update apis.
 impl ExFac {
     /// Assigns the provided job template to a live network, creating a job.
@@ -123,6 +134,21 @@ impl ExFac {
                 organization: opts.organization.to_string(),
                 job: opts.job.to_string(),
                 run: opts.run.to_string(),
+            },
+        )
+        .await
+    }
+
+    /// Gets the status of the specified job
+    #[tracing::instrument(skip(self, opts))]
+    pub async fn trigger(&self, opts: TriggerOpts) -> Result<TriggerOnDemandJobResponse> {
+        tracing::debug!(?opts, "triggering job");
+        let url = format!("{}/triggerOnDemand", self.opts.job());
+        self.post(
+            url,
+            TriggerOnDemandJobRequest {
+                organization: opts.organization.to_string(),
+                job: opts.job.to_string(),
             },
         )
         .await

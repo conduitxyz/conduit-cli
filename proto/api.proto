@@ -317,3 +317,6 @@ message CLIAuthResponse {
     double created = 2;
     repeated string organizations = 3;
 }
+
+message TriggerOnDemandJobResponse {
+}

@@ -40,7 +40,9 @@ async fn main() -> eyre::Result<()> {
         Subcommands::Completions { shell } => {
             generate(shell, &mut Opts::command(), "exfac", &mut std::io::stdout())
         }
-        Subcommands::Network(args) => args.run(exfac).await?,
+        Subcommands::Network(args) => {
+            args.run(exfac).await?
+        },
         Subcommands::User(args) => args.run(exfac).await?,
         Subcommands::JobTemplate(args) => args.run(exfac).await?,
         Subcommands::Job(args) => args.run(exfac).await?,
