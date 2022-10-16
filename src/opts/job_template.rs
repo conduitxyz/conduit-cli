@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand};
 use std::fmt::Write;
-use uuid::Uuid;
 
 use crate::api::{job_template::CreateOpts, ClientError, ExFac};
 
