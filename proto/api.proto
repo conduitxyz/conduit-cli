@@ -12,15 +12,15 @@ message UserFacingError {
     string message = 1;
 }
 
-enum TestnetStatus {
+enum NetworkStatus {
     CREATING = 0;
     RUNNING = 1;
     ERRORED = 2;
     DELETING = 3;
 }
 
-message Testnet {
-    string testnet = 1;
+message Network {
+    string network = 1;
     string name = 2;
     string rpcURL = 3;
     string explorerURL = 4;
@@ -31,7 +31,7 @@ message Testnet {
     repeated Job jobs = 1001;
 }
 
-message CreateTestnetOptions {
+message CreateNetworkOptions {
     string name = 1;
 
     string forkURL = 2;
@@ -57,50 +57,50 @@ message CreateTestnetOptions {
     DeploymentType type = 1000;
 }
 
-message CreateTestnetRequest {
-    string testnet = 1;
+message CreateNetworkRequest {
+    string network = 1;
     string organization = 2;
-    CreateTestnetOptions opts = 3;
+    CreateNetworkOptions opts = 3;
     // Only the subset of fields which are not defined in this request need to be
     // filled in here.
     repeated CreateJobRequest jobs = 4;
 }
 
-message CreateTestnetResponse {
-    Testnet testnet = 1;
+message CreateNetworkResponse {
+    Network network = 1;
 }
 
-message ListTestnetsRequest {
+message ListNetworksRequest {
     string organization = 1;
 }
 
-message ListTestnetsResponse {
-    repeated Testnet testnets = 1;
+message ListNetworksResponse {
+    repeated Network networks = 1;
 }
 
-message DeleteTestnetRequest {
-    string testnet = 1;
+message DeleteNetworkRequest {
+    string network = 1;
     string organization = 2;
 }
 
-message GetTestnetRequest {
-    string testnet = 1;
+message GetNetworkRequest {
+    string network = 1;
     string organization = 2;
 }
 
-message GetTestnetResponse {
-    Testnet testnet = 1;
+message GetNetworkResponse {
+    Network network = 1;
 }
 
-message DeleteTestnetResponse {}
+message DeleteNetworkResponse {}
 
 /*
-message StreamTestnetLogsRequest {
+message StreamNetworkLogsRequest {
     string name = 1;
     google.protobuf.Timestamp sinceTime = 2;
 }
 
-message StreamTestnetLogsResponse {
+message StreamNetworkLogsResponse {
     string logLine = 1;
     google.protobuf.Timestamp time = 2;
 }
@@ -139,11 +139,13 @@ message CreateJobTemplateRequest {
     string organization = 1;
     string job_template = 2;
     string repository = 3;
-    string prepareCommand = 4;
     string defaultCommand = 5;
     string name = 6;
     string description = 7;
     string imageURL = 8;
+
+    // hide this for now
+    string prepareCommand = 4;
 }
 
 message CreateJobTemplateResponse {
@@ -197,7 +199,7 @@ message CreateJobRequest {
     string job = 1;
     string organization = 2;
     string job_template = 3;
-    string testnet = 4;
+    string network = 4;
     string executeCommand = 5;
     repeated EnvironmentVariable variables = 6;
     string name = 7;
@@ -206,6 +208,8 @@ message CreateJobRequest {
     JobType type = 9;
     string schedule = 10; // Only used for JobType.OnSchedule
 
+    // Overwrites executeCommand and uses the default command from the
+    // job_template
     bool useDefaultCommand = 11;
 }
 
@@ -217,7 +221,7 @@ message Job {
     string job = 1;
     string organization = 2;
     string job_template = 3;
-    string testnet = 4;
+    string network = 4;
     string executeCommand = 5;
     repeated EnvironmentVariable variables = 6;
     string name = 7;
@@ -240,6 +244,9 @@ message Job {
 message TriggerOnDemandJobRequest {
     string organization = 1;
     string job = 2;
+}
+
+message TriggerOnDemandJobResponse {
 }
 
 message DeleteJobRequest {
@@ -270,7 +277,7 @@ message GetJobRunsResponse {
 
 message GetAllJobRunsRequest{
     string organization = 1;
-    string testnet = 2;
+    string network = 2;
 }
 
 message GetAllJobRunsResponse {
@@ -316,7 +323,4 @@ message CLIAuthResponse {
     string key = 1;
     double created = 2;
     repeated string organizations = 3;
-}
-
-message TriggerOnDemandJobResponse {
 }

@@ -34,7 +34,7 @@ impl NetworkArgs {
         match self.sub {
             Subcommands::List => {
                 let resp = exfac.list_networks().await?;
-                for network in resp.testnets {
+                for network in resp.networks {
                     println!("Name: {}", &network.name);
                     let mut network = serde_json::to_value(&network)?;
                     let obj = network.as_object_mut().unwrap();

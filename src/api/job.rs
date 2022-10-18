@@ -82,7 +82,7 @@ impl ExFac {
                 organization: self.opts.organization.to_string(),
                 job_template: opts.template.to_string(),
                 job: Uuid::new_v4().to_string(),
-                testnet: opts.network.to_string(),
+                network: opts.network.to_string(),
                 execute_command: opts.execute_command.clone().unwrap_or_default(),
                 name: opts.name,
                 description: opts.description,
@@ -104,7 +104,7 @@ impl ExFac {
             url,
             GetAllJobRunsRequest {
                 organization: self.opts.organization.to_string(),
-                testnet: opts.network.to_string(),
+                network: opts.network.to_string(),
             },
         )
         .await

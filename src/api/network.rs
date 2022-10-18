@@ -3,11 +3,11 @@ use uuid::Uuid;
 
 use crate::api::{ExFac, Result};
 use crate::types::{
-    create_testnet_options::Mining, CreateJobRequest, CreateTestnetOptions, CreateTestnetRequest,
-    CreateTestnetResponse, DeploymentType,
+    create_network_options::Mining, CreateJobRequest, CreateNetworkOptions, CreateNetworkRequest,
+    CreateNetworkResponse, DeploymentType,
 };
 use crate::types::{
-    DeleteTestnetRequest, DeleteTestnetResponse, ListTestnetsRequest, ListTestnetsResponse,
+    DeleteNetworkRequest, DeleteNetworkResponse, ListNetworksRequest, ListNetworksResponse,
 };
 
 #[derive(Debug, Parser)]
@@ -56,11 +56,11 @@ pub struct DeleteOpts {
 
 impl ExFac {
     /// Returns a list of all the networks under the provided organization.
-    pub async fn list_networks(&self) -> Result<ListTestnetsResponse> {
+    pub async fn list_networks(&self) -> Result<ListNetworksResponse> {
         let url = format!("{}/list", self.opts.network());
         self.post(
             url,
-            ListTestnetsRequest {
+            ListNetworksRequest {
                 organization: self.opts.organization.to_string(),
             },
         )
@@ -68,14 +68,14 @@ impl ExFac {
     }
 
     /// Creates a new network for the provided options.
-    pub async fn create_network(&self, opts: &CreateOpts) -> Result<CreateTestnetResponse> {
+    pub async fn create_network(&self, opts: &CreateOpts) -> Result<CreateNetworkResponse> {
         let url = format!("{}/create", self.opts.network());
         self.post(
             url,
-            CreateTestnetRequest {
+            CreateNetworkRequest {
                 organization: self.opts.organization.to_string(),
-                testnet: Uuid::new_v4().to_string(),
-                opts: Some(CreateTestnetOptions {
+                network: Uuid::new_v4().to_string(),
+                opts: Some(CreateNetworkOptions {
                     name: opts.name.to_owned(),
                     fork_url: opts.fork_url.to_owned(),
                     fork_block_number: opts.fork_block as i64,
@@ -102,13 +102,13 @@ impl ExFac {
     pub async fn delete_network(
         &self,
         network: Uuid,
-    ) -> Result<DeleteTestnetResponse> {
+    ) -> Result<DeleteNetworkResponse> {
         let url = format!("{}/delete", self.opts.network());
         self.post(
             url,
-            DeleteTestnetRequest {
+            DeleteNetworkRequest {
                 organization: self.opts.organization.to_string(),
-                testnet: network.to_string(),
+                network: network.to_string(),
             },
         )
         .await
