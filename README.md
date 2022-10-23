@@ -1,19 +1,12 @@
-# <h1 align="center"> exfac.rs </h1>
+# <h1 align="center"> conduit.rs </h1>
 
-*Rust bindings & CLI to the ExFac API*
+*Rust bindings & CLI to the Conduit API*
 
 ## CLI Usage
 
 ### Onboarding
 
 First, get your API Key by running `conduit login`, which will prompt you to log in via the website.
-
-Then, run `conduit user`, and retrieve the `organization` field.
-
-```
-export API_KEY=<...>
-export ORGANIZATION=<..>
-```
 
 List all existing networks: `conduit network list`. This should be empty.
 
