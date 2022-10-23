@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+set -e
+
+CONDUIT_DIR=${CONDUIT_DIR-"$HOME/.conduit"}
+CONDUIT_BIN_DIR="$CONDUIT_DIR/bin"
+CONDUIT_MAN_DIR="$CONDUIT_DIR/share/man/man1"
+
+main() {
+  need_cmd git
+  need_cmd curl
+
+  while [[ $1 ]]; do
+    case $1 in
+      --)               shift; break;;
+
+      -r|--repo)        shift; CONDUITUP_REPO=$1;;
+      -b|--branch)      shift; CONDUITUP_BRANCH=$1;;
+      -v|--version)     shift; CONDUITUP_VERSION=$1;;
+      -p|--path)        shift; CONDUITUP_LOCAL_REPO=$1;;
+      -P|--pr)          shift; CONDUITUP_PR=$1;;
+      -C|--commit)      shift; CONDUITUP_COMMIT=$1;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      *)
+        err "internal error: unknown option "$1"\n";;
+    esac; shift
+  done
+
+  if [ ! -z "$CONDUITUP_PR" ]; then
+    if [ -z "$CONDUITUP_BRANCH" ]; then
+      CONDUITUP_BRANCH="refs/pull/$CONDUITUP_PR/head"
+    else
+      err "can't use --pr and --branch at the same time"
+    fi
+  fi
+
+  # Installs conduit from a local repository if --path parameter is provided
+  if [[ -n "$CONDUITUP_LOCAL_REPO" ]]; then
+    need_cmd cargo
+
+    # Ignore branches/versions as we do not want to modify local git state
+    if [ -n "$CONDUITUP_REPO" ] || [ -n "$CONDUIT_BRANCH" ] || [ -n "$CONDUIT_VERSION" ]; then
+      warn "--branch, --version, and --repo arguments are ignored during local install"
+    fi
+
+    # Enter local repo and build
+    say "installing from $CONDUITUP_LOCAL_REPO"
+    cd $CONDUITUP_LOCAL_REPO
+    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release # need 4 speed
+
+    # Remove prior installations if they exist
+    rm -f "$CONDUIT_BIN_DIR/conduit"
+
+    # Symlink from local repo binaries to bin dir
+    ensure ln -s "$PWD/target/release/conduit" "$CONDUIT_BIN_DIR/conduit"
+
+    say "done"
+    exit 0
+  fi
+
+  CONDUITUP_REPO=${CONDUITUP_REPO-conduit-xyz/conduit-cli}
+
+  if [[ "$CONDUITUP_REPO" == "conduit-xyz/conduit-cli" && -z "$CONDUITUP_BRANCH" && -z "$CONDUITUP_COMMIT" ]]; then
+    CONDUITUP_VERSION=${CONDUITUP_VERSION-nightly}
+    CONDUITUP_TAG=$CONDUITUP_VERSION
+
+    # Normalize versions (handle channels, versions without v prefix
+    if [[ "$CONDUITUP_VERSION" == "nightly" ]]; then
+      # Locate real nightly tag
+      SHA=$(ensure curl -sSf https://api.github.com/repos/${CONDUITUP_REPO}/git/refs/tags/nightly \
+        | grep -Eo '"sha"[^,]*' \
+        | grep -Eo '[^:]*$' \
+        | tr -d '"' \
+        | tr -d ' ')
+      CONDUITUP_TAG="nightly-${SHA}"
+    elif [[ "$CONDUITUP_VERSION" == nightly* ]]; then
+      CONDUITUP_VERSION="nightly"
+    elif [[ "$CONDUITUP_VERSION" == [[:digit:]]* ]]; then
+      # Add v prefix
+      CONDUITUP_VERSION="v${CONDUITUP_VERSION}"
+      CONDUITUP_TAG="${CONDUITUP_VERSION}"
+    fi
+
+    say "installing conduit (version ${CONDUITUP_VERSION}, tag ${CONDUITUP_TAG})"
+
+    PLATFORM="$(uname -s)"
+    case $PLATFORM in
+      Linux)
+        PLATFORM="linux"
+        ;;
+      Darwin)
+        PLATFORM="darwin"
+        ;;
+      *)
+        err "unsupported platform: $PLATFORM"
+        ;;
+    esac
+
+    ARCHITECTURE="$(uname -m)"
+    if [ "${ARCHITECTURE}" = "x86_64" ]; then
+      # Redirect stderr to /dev/null to avoid printing errors if non Rosetta.
+      if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
+        ARCHITECTURE="arm64" # Rosetta.
+      else
+        ARCHITECTURE="amd64" # Intel.
+      fi
+    elif [ "${ARCHITECTURE}" = "arm64" ] ||[ "${ARCHITECTURE}" = "aarch64" ] ; then
+      ARCHITECTURE="arm64" # Arm.
+    else
+      ARCHITECTURE="amd64" # Amd.
+    fi
+
+    # Compute the URL of the release tarball in the Conduit repository.
+    RELEASE_URL="https://github.com/${CONDUITUP_REPO}/releases/download/${CONDUITUP_TAG}/"
+    BIN_TARBALL_URL="${RELEASE_URL}conduit_${CONDUITUP_VERSION}_${PLATFORM}_${ARCHITECTURE}.tar.gz"
+    MAN_TARBALL_URL="${RELEASE_URL}conduit_man_${CONDUITUP_VERSION}.tar.gz"
+
+    # Download the binaries tarball and unpack it into the .conduit bin directory.
+    say "downloading latest conduit"
+    ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $CONDUIT_BIN_DIR
+    # Download the man tarball and unpack it into the .conduit man directory.
+    say "downloading manpages"
+    ensure curl -# -L $MAN_TARBALL_URL | tar -xzC $CONDUIT_MAN_DIR
+    say "installed - $($CONDUIT_BIN_DIR/conduit --version)"
+    say "done"
+
+    if [[ $(which conduit) =~ "cargo" ]]; then
+      warn "it appears your system has already has conduit installed via cargo. you may need to run 'rm $(which conduit)' to allow conduitup to take precedence!"
+    fi
+  else
+    need_cmd cargo
+    CONDUITUP_BRANCH=${CONDUITUP_BRANCH-master}
+    REPO_PATH="${CONDUIT_DIR}/${CONDUITUP_REPO}"
+
+    if [ ! -d $REPO_PATH ]; then
+      # Repo path did not exist, grab the author from the repo, make a directory in .conduit, cd to it and clone.
+      IFS="/" read -ra AUTHOR <<< "$CONDUITUP_REPO"
+      ensure mkdir -p "$CONDUIT_DIR/$AUTHOR"
+      cd "$CONDUIT_DIR/$AUTHOR"
+      ensure git clone https://github.com/${CONDUITUP_REPO}
+    fi
+    # force checkout, discarding any local changes
+    cd $REPO_PATH
+    ensure git fetch origin ${CONDUITUP_BRANCH}:remotes/origin/${CONDUITUP_BRANCH}
+    ensure git checkout origin/${CONDUITUP_BRANCH}
+    # If set, checkout specific commit from branch
+    if [ ! -z $CONDUITUP_COMMIT ]; then
+      say "installing at commit ${CONDUITUP_COMMIT}"
+      ensure git checkout ${CONDUITUP_COMMIT}
+    fi
+    # Build the repo and install it locally to the .conduit bin directory.
+    # --root appends /bin to the directory it is given, so we pass CONDUIT_DIR.
+    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./cli --bins --locked --force --root $CONDUIT_DIR
+    # install anvil
+    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./anvil --bin anvil --locked --force --root $CONDUIT_DIR
+
+    # If help2man is installed, use it to add Conduit man pages.
+    if command -v help2man &> /dev/null ; then
+      help2man -N $CONDUIT_BIN_DIR/forge > $CONDUIT_MAN_DIR/forge.1
+      help2man -N $CONDUIT_BIN_DIR/cast > $CONDUIT_MAN_DIR/cast.1
+      help2man -N $CONDUIT_BIN_DIR/anvil > $CONDUIT_MAN_DIR/anvil.1
+    fi
+    say "done"
+  fi
+}
+
+usage() {
+  cat 1>&2 <<EOF
+The installer for Conduit.
+Update or revert to a specific Conduit version with ease.
+USAGE:
+    conduitup <OPTIONS>
+OPTIONS:
+    -h, --help      Print help information
+    -v, --version   Install a specific version
+    -b, --branch    Install a specific branch
+    -P, --pr        Install a specific Pull Request
+    -C, --commit    Install a specific commit
+    -r, --repo      Install from a remote GitHub repo (uses default branch if no other options are set)
+    -p, --path      Install a local repository
+EOF
+}
+
+say() {
+  printf 'conduitup: %s\n' "$1"
+}
+
+warn() {
+  say "warning: ${1}" >&2
+}
+
+err() {
+  say "$1" >&2
+  exit 1
+}
+
+need_cmd() {
+  if ! check_cmd "$1"; then
+    err "need '$1' (command not found)"
+  fi
+}
+
+check_cmd() {
+  command -v "$1" > /dev/null 2>&1
+}
+
+# Run a command that should never fail. If the command fails execution
+# will immediately terminate with an error showing the failing
+# command.
+ensure() {
+  if ! "$@"; then err "command failed: $*"; fi
+}
+
+main "$@" || exit 1

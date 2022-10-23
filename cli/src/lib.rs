@@ -8,11 +8,11 @@ pub mod handler;
 pub mod opts;
 pub mod utils;
 
-pub const EXFAC_DIR_NAME: &str = ".exfac";
+pub const CONDUIT_DIR_NAME: &str = ".conduit";
 pub fn config_dir() -> std::path::PathBuf {
     dirs_next::home_dir()
         .expect("could not make config dir")
-        .join(EXFAC_DIR_NAME)
+        .join(CONDUIT_DIR_NAME)
         .join("auth")
 }
 
