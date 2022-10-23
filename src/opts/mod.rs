@@ -1,4 +1,4 @@
-use crate::api::config::ExFacOpts;
+use crate::api::config::ConduitOpts;
 use clap::{Parser, Subcommand};
 
 mod job;
@@ -9,12 +9,12 @@ mod user;
 mod organization;
 
 #[derive(Debug, Parser)]
-#[clap(name = "exfac", version = crate::utils::VERSION_MESSAGE)]
+#[clap(name = "conduit", version = crate::utils::VERSION_MESSAGE)]
 pub struct Opts {
     #[clap(subcommand)]
     pub sub: Subcommands,
     #[clap(flatten)]
-    pub api: ExFacOpts,
+    pub api: ConduitOpts,
 }
 
 #[derive(Debug, Subcommand)]

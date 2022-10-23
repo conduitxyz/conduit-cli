@@ -1,7 +1,7 @@
 use clap::Parser;
 use uuid::Uuid;
 
-use crate::api::{ExFac, Result};
+use crate::api::{Conduit, Result};
 use crate::types::{
     create_network_options::Mining, CreateJobRequest, CreateNetworkOptions, CreateNetworkRequest,
     CreateNetworkResponse, DeploymentType,
@@ -54,7 +54,7 @@ pub struct DeleteOpts {
     pub network: Uuid,
 }
 
-impl ExFac {
+impl Conduit {
     /// Returns a list of all the networks under the provided organization.
     pub async fn list_networks(&self) -> Result<ListNetworksResponse> {
         let url = format!("{}/list", self.opts.network());

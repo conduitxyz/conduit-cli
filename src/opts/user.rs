@@ -1,4 +1,4 @@
-use crate::api::ExFac;
+use crate::api::Conduit;
 use clap::Parser;
 
 #[derive(Debug, Parser)]
@@ -6,8 +6,8 @@ use clap::Parser;
 pub struct Args;
 
 impl Args {
-    pub async fn run(&self, exfac: ExFac) -> eyre::Result<()> {
-        let resp = exfac.user().await?;
+    pub async fn run(&self, conduit: Conduit) -> eyre::Result<()> {
+        let resp = conduit.user().await?;
         println!("{}", serde_json::to_string(&resp)?);
         Ok(())
     }

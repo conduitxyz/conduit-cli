@@ -1,12 +1,12 @@
 use clap::{Parser, Subcommand};
 use std::fmt::Write;
 
-use crate::api::{job_template::CreateOpts, ClientError, ExFac};
+use crate::api::{job_template::CreateOpts, ClientError, Conduit};
 
 #[derive(Debug, Parser)]
 // TODO: Should the user set a default organization client side
 // in some config when they auth, instead of having to specify it all the time?
-// And maybe make it part of ExFac config?
+// And maybe make it part of Conduit config?
 pub struct Args {
     #[clap(subcommand)]
     sub: Subcommands,
@@ -24,10 +24,10 @@ pub enum Subcommands {
 }
 
 impl Args {
-    pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
+    pub async fn run(self, conduit: Conduit) -> eyre::Result<()> {
         match self.sub {
             Subcommands::List => {
-                let resp = exfac.list_job_templates().await?;
+                let resp = conduit.list_job_templates().await?;
                 for job_template in resp.templates {
                     println!("Name: {}", &job_template.name);
                     let mut job_template = serde_json::to_value(&job_template)?;
@@ -39,7 +39,7 @@ impl Args {
                 }
             }
             Subcommands::CreateOrUpdate(opts) => {
-                match exfac.create_or_update_job_template(&opts).await {
+                match conduit.create_or_update_job_template(&opts).await {
                     Ok(resp) => println!(
                         "Job template {} created.\nResponse: {}",
                         opts.name,

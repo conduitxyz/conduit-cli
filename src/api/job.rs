@@ -1,7 +1,7 @@
 use clap::Parser;
 use uuid::Uuid;
 
-use crate::api::{ExFac, Result};
+use crate::api::{Conduit, Result};
 use crate::types::{
     CreateJobRequest, CreateJobResponse, EnvironmentVariable, GetAllJobRunsRequest, TriggerOnDemandJobRequest,
     GetAllJobRunsResponse, GetJobRunStatusRequest, GetJobRunStatusResponse, TriggerOnDemandJobResponse
@@ -69,7 +69,7 @@ pub struct TriggerOpts {
 }
 
 // TODO: Investigate whether we want to split in pure create/update apis.
-impl ExFac {
+impl Conduit {
     /// Assigns the provided job template to a live network, creating a job.
     #[tracing::instrument(skip(self, opts))]
     pub async fn assign(&self, opts: AssignOpts) -> Result<CreateJobResponse> {

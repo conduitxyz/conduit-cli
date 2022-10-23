@@ -1,21 +1,21 @@
 use clap::Parser;
 
 #[derive(Clone, Debug, Parser)]
-/// Parameters for auth'ing and connecting to the ExFac API.
-pub struct ExFacOpts {
+/// Parameters for auth'ing and connecting to the Conduit API.
+pub struct ConduitOpts {
     // TODO: Remove default value.
     #[clap(env, long, short, default_value = "")]
-    /// Your ExFac API key.
+    /// Your Conduit API key.
     pub api_key: String,
     #[clap(env, long, short, default_value = "https://api.exfac.xyz")]
-    /// The URL pointing to the ExFac API.
+    /// The URL pointing to the Conduit API.
     pub url: String,
     /// The default organization to scope our API requests to.
     #[clap(env, long, short, default_value="")]
     pub organization: String,
 }
 
-impl ExFacOpts {
+impl ConduitOpts {
     // Returns the network slug.
     pub fn network(&self) -> String {
         format!("{}/v1/network", self.url)

@@ -3,13 +3,13 @@ use std::fmt::Write;
 
 use crate::api::{
     network::{CreateOpts, DeleteOpts},
-    ClientError, ExFac,
+    ClientError, Conduit,
 };
 
 #[derive(Debug, Parser)]
 // TODO: Should the user set a default organization client side
 // in some config when they auth, instead of having to specify it all the time?
-// And maybe make it part of ExFac config?
+// And maybe make it part of Conduit config?
 pub struct NetworkArgs {
     #[clap(subcommand)]
     sub: Subcommands,
@@ -30,10 +30,10 @@ pub enum Subcommands {
 }
 
 impl NetworkArgs {
-    pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
+    pub async fn run(self, conduit: Conduit) -> eyre::Result<()> {
         match self.sub {
             Subcommands::List => {
-                let resp = exfac.list_networks().await?;
+                let resp = conduit.list_networks().await?;
                 for network in resp.networks {
                     println!("Name: {}", &network.name);
                     let mut network = serde_json::to_value(&network)?;
@@ -44,7 +44,7 @@ impl NetworkArgs {
                     println!("{}", table);
                 }
             }
-            Subcommands::Create(opts) => match exfac.create_network(&opts).await {
+            Subcommands::Create(opts) => match conduit.create_network(&opts).await {
                 Ok(resp) => println!(
                     "Network {} created\nResponse: {}",
                     opts.name,
@@ -57,7 +57,7 @@ impl NetworkArgs {
                 Err(err) => eyre::bail!(err),
             },
             Subcommands::Delete(opts) => {
-                match exfac.delete_network(opts.network).await {
+                match conduit.delete_network(opts.network).await {
                     Ok(_) => println!("Network {} deleted", opts.network),
                     // Err(ClientError::EmptyResponse) => println!("Network not found. Did you already delete it? Is there a typo in your network id?"),
                     Err(err) => eyre::bail!(err),

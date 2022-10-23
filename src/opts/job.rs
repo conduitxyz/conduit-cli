@@ -1,6 +1,6 @@
 use crate::api::{
     job::{AssignOpts, ListOpts, StatusOpts, TriggerOpts},
-    ExFac,
+    Conduit,
 };
 use clap::{Parser, Subcommand};
 
@@ -11,12 +11,12 @@ pub struct Args {
 }
 
 #[derive(Debug, Subcommand)]
-/// Commands about interacting with the various jobs
+/// Commands about interacting with the various Conduit
 #[allow(clippy::large_enum_variant)]
 pub enum Subcommands {
     /// Creates or updates a job
     Assign(AssignOpts),
-    /// Lists all historical jobs for the specified org/network
+    /// Lists all historical Conduit for the specified org/network
     List(ListOpts),
     /// Gets the status of a specified job (can be any of the historical ones, or any ones running
     /// at the moment)
@@ -26,22 +26,22 @@ pub enum Subcommands {
 }
 
 impl Args {
-    pub async fn run(self, exfac: ExFac) -> eyre::Result<()> {
+    pub async fn run(self, conduit: Conduit) -> eyre::Result<()> {
         match self.sub {
             Subcommands::Assign(opts) => {
-                let resp = exfac.assign(opts).await?;
+                let resp = conduit.assign(opts).await?;
                 println!("{}", serde_json::to_string(&resp)?);
             }
             Subcommands::List(opts) => {
-                let resp = exfac.list(opts).await?;
+                let resp = conduit.list(opts).await?;
                 println!("{}", serde_json::to_string(&resp)?);
             }
             Subcommands::Status(opts) => {
-                let resp = exfac.status(opts).await?;
+                let resp = conduit.status(opts).await?;
                 println!("{}", serde_json::to_string(&resp)?);
             }
             Subcommands::Trigger(opts) => {
-                exfac.trigger(opts).await?;
+                conduit.trigger(opts).await?;
                 println!("Triggered job!");
             }
         }

@@ -254,6 +254,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "conduit"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "clap",
+ "clap_complete",
+ "color-eyre",
+ "dirs-next",
+ "dotenv",
+ "eyre",
+ "hyper",
+ "prost",
+ "prost-build",
+ "prost-types",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-error",
+ "tracing-subscriber",
+ "uuid",
+ "vergen",
+ "webbrowser",
+ "yansi",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -391,35 +420,6 @@ checksum = "aa68f1b12764fab894d2755d2518754e71b4fd80ecfb822714a1206c2aab39bf"
 dependencies = [
  "cc",
  "libc",
-]
-
-[[package]]
-name = "exfac"
-version = "0.1.0"
-dependencies = [
- "axum",
- "clap",
- "clap_complete",
- "color-eyre",
- "dirs-next",
- "dotenv",
- "eyre",
- "hyper",
- "prost",
- "prost-build",
- "prost-types",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-error",
- "tracing-subscriber",
- "uuid",
- "vergen",
- "webbrowser",
- "yansi",
 ]
 
 [[package]]

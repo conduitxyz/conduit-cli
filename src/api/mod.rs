@@ -1,5 +1,5 @@
 pub mod config;
-use config::ExFacOpts;
+use config::ConduitOpts;
 
 pub mod job;
 pub mod job_template;
@@ -9,18 +9,18 @@ use reqwest::Client;
 use crate::types::LoadUserResponse;
 use serde::{de::DeserializeOwned, Serialize};
 
-/// The ExFac REST API client.
+/// The Conduit REST API client.
 #[derive(Clone, Debug)]
-pub struct ExFac {
+pub struct Conduit {
     client: Client,
-    opts: ExFacOpts,
+    opts: ConduitOpts,
 }
 
 type Result<T> = std::result::Result<T, ClientError>;
 
-impl ExFac {
+impl Conduit {
     /// Instantiates a client from the provided opts.
-    pub fn new(opts: ExFacOpts) -> Self {
+    pub fn new(opts: ConduitOpts) -> Self {
         Self {
             client: Client::new(),
             opts,

@@ -1,7 +1,7 @@
 use clap::Parser;
 use uuid::Uuid;
 
-use crate::api::{ExFac, Result};
+use crate::api::{Conduit, Result};
 use crate::types::{
     CreateJobTemplateRequest, CreateJobTemplateResponse, GetJobTemplatesRequest,
     GetJobTemplatesResponse,
@@ -43,7 +43,7 @@ pub struct CreateOpts {
     image_url: String,
 }
 
-impl ExFac {
+impl Conduit {
     /// Returns a list of all the networks under the provided organization.
     pub async fn list_job_templates(&self) -> Result<GetJobTemplatesResponse> {
         let url = format!("{}/list", self.opts.job_template());
