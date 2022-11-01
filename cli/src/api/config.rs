@@ -4,14 +4,14 @@ use clap::Parser;
 /// Parameters for auth'ing and connecting to the Conduit API.
 pub struct ConduitOpts {
     // TODO: Remove default value.
-    #[clap(env, long, short, default_value = "")]
+    #[clap(env="CONDUIT_API_KEY", long, short, default_value = "")]
     /// Your Conduit API key.
     pub api_key: String,
     #[clap(env, long, short, default_value = "https://api.exfac.xyz")]
     /// The URL pointing to the Conduit API.
     pub url: String,
     /// The default organization to scope our API requests to.
-    #[clap(env, long, short, default_value="")]
+    #[clap(env="CONDUIT_ORGANIZATION", long, short, default_value="")]
     pub organization: String,
 }
 

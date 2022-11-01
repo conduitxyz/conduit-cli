@@ -26,13 +26,13 @@ async fn main() -> eyre::Result<()> {
     if opts.api.api_key.is_empty() && !matches!(opts.sub, Subcommands::Login(_)) {
         opts.api.api_key = match std::fs::read_to_string(conduit::config_dir().join("api-key")) {
             Ok(key) => key,
-            Err(_) => eyre::bail!("No API Key found. Either login via `conduit login` or provide `--api-key` (or set via env var `API_KEY`)")
+            Err(_) => eyre::bail!("No API Key found. Either login via `conduit login` or provide `--api-key` (or set via env var `CONDUIT_API_KEY`)")
         };
     }
     if opts.api.organization.is_empty() && !matches!(opts.sub, Subcommands::Login(_)) {
         opts.api.organization = match std::fs::read_to_string(conduit::config_dir().join("organization")) {
             Ok(key) => key,
-            Err(_) => eyre::bail!("No Organization found. Either login via `conduit login` or provide `--organization` (or set via env var `ORGANIZATION`)")
+            Err(_) => eyre::bail!("No Organization found. Either login via `conduit login` or provide `--organization` (or set via env var `CONDUIT_ORGANIZATION`)")
         };
     }
     
