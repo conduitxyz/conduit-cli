@@ -1,6 +1,7 @@
 use vergen::{Config, ShaKind};
 
 fn main() {
+    std::env::set_var("PROTOC", protobuf_src::protoc());
     let mut config = Config::default();
     // Change the SHA output to the short variant
     *config.git_mut().sha_kind_mut() = ShaKind::Short;
