@@ -1,10 +1,11 @@
 FROM alpine as build-environment
-ENV CFLAGS=-mno-outline-atomics
 WORKDIR /opt
-RUN apk add clang lld curl build-base linux-headers git \
+RUN apk add clang lld curl build-base linux-headers git pkgconfig openssl-dev\
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh \
     && chmod +x ./rustup.sh \
     && ./rustup.sh -y
+
+RUN [[ "$TARGETARCH" = "arm64" ]] && echo "export CFLAGS=-mno-outline-atomics" >> $HOME/.profile || true
 
 WORKDIR /opt/conduit
 COPY . .
