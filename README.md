@@ -1,8 +1,7 @@
 ## Conduit
 
-![Github Actions][gha-badge] [![Telegram Chat][tg-badge]][tg-url] [![Telegram Support][tg-support-badge]][tg-support-url]
+[![Telegram Support]][tg-support-url]
 
-[gha-badge]: https://img.shields.io/github/workflow/status/conduit-xyz/conduit/test?style=flat-square
 [tg-support-url]: https://t.me/conduitsupport
 
 **Conduit is the cli for the Conduit app.**
