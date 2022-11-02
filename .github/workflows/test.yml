@@ -15,8 +15,8 @@ jobs:
         uses: conduit-xyz/conduit-toolchain@v1
         with:
           version: nightly
-          api_key: ${{ secrets.API_KEY }}
-          organization: ${{ secrets.ORGANIZATION }}
+          api_key: ${{ secrets.CONDUIT_API_KEY }}
+          organization: ${{ secrets.CONDUIT_ORGANIZATION }}
 
       - name: create network
         run: conduit network create --name "my-network-${{github.run_id}}"
