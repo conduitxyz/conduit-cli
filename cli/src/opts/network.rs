@@ -46,8 +46,7 @@ impl NetworkArgs {
             }
             Subcommands::Create(opts) => match conduit.create_network(&opts).await {
                 Ok(resp) => println!(
-                    "Network {} created\nResponse: {}",
-                    opts.name,
+                    "{}",
                     serde_json::to_string_pretty(&resp)?
                 ),
                 Err(ClientError::EmptyResponse) => println!(

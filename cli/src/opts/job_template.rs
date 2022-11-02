@@ -41,8 +41,7 @@ impl Args {
             Subcommands::CreateOrUpdate(opts) => {
                 match conduit.create_or_update_job_template(&opts).await {
                     Ok(resp) => println!(
-                        "Job template {} created.\nResponse: {}",
-                        opts.name,
+                        "{}",
                         serde_json::to_string_pretty(&resp)?
                     ),
                     Err(ClientError::EmptyResponse) => println!(
