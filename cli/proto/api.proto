@@ -79,10 +79,8 @@ message ListNetworksResponse {
 }
 
 message DeleteNetworkRequest {
-    // You can specify network OR name, prefers network if both are specified.
     string network = 1;
-    string name = 2;
-    string organization = 3;
+    string organization = 2;
 }
 
 message GetNetworkRequest {

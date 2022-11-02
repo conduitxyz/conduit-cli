@@ -39,25 +39,25 @@ impl EyreHandler for Handler {
     }
 }
 
-/// Installs the Conduit eyre hook as the global error report hook.
+/// Installs the Foundry eyre hook as the global error report hook.
 ///
 /// # Details
 ///
 /// By default a simple user-centric handler is installed, unless
-/// `CONDUIT_DEBUG` is set in the environment, in which case a more
+/// `FOUNDRY_DEBUG` is set in the environment, in which case a more
 /// verbose debug-centric handler is installed.
 ///
 /// Panics are always caught by the more debug-centric handler.
 #[cfg_attr(windows, inline(never))]
 pub fn install() -> eyre::Result<()> {
-    let debug_enabled = std::env::var("CONDUIT_DEBUG").is_ok();
+    let debug_enabled = std::env::var("FOUNDRY_DEBUG").is_ok();
 
     if debug_enabled {
         color_eyre::install()?;
     } else {
         let (panic_hook, _) = color_eyre::config::HookBuilder::default()
             .panic_section(
-                "This is a bug. Consider reporting it at https://github.com/conduit-xyz/conduit-cli",
+                "This is a bug. Consider reporting it at https://github.com/foundry-rs/foundry",
             )
             .into_hooks();
         panic_hook.install();

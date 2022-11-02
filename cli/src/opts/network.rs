@@ -56,20 +56,8 @@ impl NetworkArgs {
                 Err(err) => eyre::bail!(err),
             },
             Subcommands::Delete(opts) => {
-                if opts.name == "" && opts.network.to_string() == "00000000-0000-0000-0000-000000000000" {
-                    println!(
-                        "Must specify a name (--name) or network (--network)"
-                    );
-                    eyre::bail!(ClientError::EmptyResponse);
-                }
-                match conduit.delete_network(&opts).await {
-                    Ok(_) => {
-                        if opts.network.to_string() == "00000000-0000-0000-0000-000000000000" {
-                            println!("Network with name {} deleted", opts.name)
-                        } else {
-                            println!("Network with id {} deleted", opts.network)
-                        }
-                    },
+                match conduit.delete_network(opts.network).await {
+                    Ok(_) => println!("Network {} deleted", opts.network),
                     // Err(ClientError::EmptyResponse) => println!("Network not found. Did you already delete it? Is there a typo in your network id?"),
                     Err(err) => eyre::bail!(err),
                 }
