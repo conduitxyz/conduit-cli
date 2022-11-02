@@ -22,7 +22,7 @@ jobs:
           organization: ${{ secrets.CONDUIT_ORGANIZATION }}
 
       - name: create network
-s        run: conduit network create --name "my-network-${{github.run_id}}" > out.json
+        run: conduit network create --name "my-network-${{github.run_id}}" > out.json
       
       - name: extract identifiers
         id: data
