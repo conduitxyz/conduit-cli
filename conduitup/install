@@ -53,4 +53,4 @@ if [[ "$OSTYPE" =~ ^darwin && ! -f /usr/local/opt/libusb/lib/libusb-1.0.0.dylib 
 fi
 
 echo && echo "Detected your preferred shell is ${PREF_SHELL} and added conduitup to PATH. Run 'source ${PROFILE}' or start a new terminal session to use conduitup."
-echo "Then, simply run 'conduitup' to install Foundry."
+echo "Then, simply run 'conduitup' to install Conduit."
