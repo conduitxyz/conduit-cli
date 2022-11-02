@@ -1,0 +1,27 @@
+on: [push]
+
+name: test
+
+jobs:
+  check:
+    name: Conduit test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Conduit
+        uses: conduit-xyz/conduit-toolchain@v1
+        with:
+          version: nightly
+          api_key: ${{ secrets.API_KEY }}
+          organization: ${{ secrets.ORGANIZATION }}
+
+      - name: create network
+        run: conduit network create --name "my-network-${{github.run_id}}"
+      # Use jq to parse the response, and run tests agains the rpc url
+      
+      # Once done, clean up the network
+      - name: delete network
+        run: conduit network delete --name "my-network-${{github.run_id}}"
