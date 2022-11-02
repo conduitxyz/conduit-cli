@@ -32,7 +32,7 @@ jobs:
  
       - name: version check rpc url
         run: |
-          curl -vvv -X POST -d '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' ${{ steps.data.outputs.RPC_URL }}
+          curl -vvv -H "Content-Type: application/json" -X POST -d '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' ${{ steps.data.outputs.RPC_URL }}
       
       # Once done, clean up the network
       - name: delete network
