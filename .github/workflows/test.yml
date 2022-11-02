@@ -19,9 +19,26 @@ jobs:
           organization: ${{ secrets.CONDUIT_ORGANIZATION }}
 
       - name: create network
+        id: create
         run: conduit network create --name "my-network-${{github.run_id}}"
+      
       # Use jq to parse the response, and run tests agains the rpc url
+      - name: Extract rpcURL from create response
+        uses: sergeysova/jq-action@v2
+        id: rpcURL
+        with:
+          cmd: 'echo ${{ steps.create.outputs.value }} | jq .network.rpcURL -r'
+
+      - name: Extract network id from create response
+        uses: sergeysova/jq-action@v2
+        id: networkID
+        with:
+          cmd: 'echo ${{ steps.create.outputs.value }} | jq .network.network -r'
+      
+      - name: version check rpc url
+        run: |
+          curl -vvv -X POST -d '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' ${{ steps.rpcURL.outputs.value }}
       
       # Once done, clean up the network
       - name: delete network
-        run: conduit network delete --name "my-network-${{github.run_id}}"
+        run: conduit network delete --network ${{ steps.networkID.outputs.value }}
