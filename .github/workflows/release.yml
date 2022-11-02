@@ -209,6 +209,7 @@ jobs:
                   script: |
                       const moveTag = require('./.github/scripts/move-tag.js')
                       await moveTag({ github, context }, 'nightly')
+            
             - name: Delete old nightlies
               uses: actions/github-script@v5
               with:
