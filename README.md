@@ -11,7 +11,7 @@
 First run the command below to get `conduitup`, the Conduit toolchain installer:
 
 ```sh
-curl -L https://conduit-cli.conduit.xyz | bash
+curl -L https://raw.githubusercontent.com/conduit-xyz/conduit-cli/master/conduitup/install | bash
 ```
 
 If you do not want to use the redirect, feel free to manually download the conduitup installation script from [here](https://raw.githubusercontent.com/conduit-xyz/conduit-cli/master/conduitup/install).
