@@ -22,26 +22,18 @@ jobs:
           organization: ${{ secrets.CONDUIT_ORGANIZATION }}
 
       - name: create network
-        id: create
-        run: conduit network create --name "my-network-${{github.run_id}}"
+s        run: conduit network create --name "my-network-${{github.run_id}}" > out.json
       
-      # Use jq to parse the response, and run tests agains the rpc url
-      - name: Extract rpcURL from create response
-        uses: sergeysova/jq-action@v2
-        id: rpcURL
-        with:
-          cmd: 'echo ${{ steps.create.outputs.value }} | jq .network.rpcURL -r'
-
-      - name: Extract network id from create response
-        uses: sergeysova/jq-action@v2
-        id: networkID
-        with:
-          cmd: 'echo ${{ steps.create.outputs.value }} | jq .network.network -r'
-      
+      - name: extract identifiers
+        id: data
+        run: |
+          echo "RPC_URL= $(jq '.network.rpcURL' out.json)" >> $GITHUB_OUTPUT
+          echo "NETWORK_ID= $(jq '.network.network' out.json)" >> $GITHUB_OUTPUT
+ 
       - name: version check rpc url
         run: |
-          curl -vvv -X POST -d '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' ${{ steps.rpcURL.outputs.value }}
+          curl -vvv -X POST -d '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' ${{ steps.data.outputs.RPC_URL }}
       
       # Once done, clean up the network
       - name: delete network
-        run: conduit network delete --network ${{ steps.networkID.outputs.value }}
+        run: conduit network delete --network ${{ steps.data.outputs.NETWORK_ID }}
