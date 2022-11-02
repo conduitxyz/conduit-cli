@@ -49,9 +49,12 @@ pub struct CreateOpts {
 #[derive(Debug, Parser)]
 /// Options for calling the /delete endpoint on the API.
 pub struct DeleteOpts {
-    /// The name of the network you are deleting.
-    #[clap(env, short, long)]
+    /// The id of the network you are deleting.
+    #[clap(env, short, long, default_value="00000000-0000-0000-0000-000000000000")]
     pub network: Uuid,
+    /// The name of the network you are deleting. Can be used instead of network.
+    #[clap(env, long, default_value="")]
+    pub name: String,
 }
 
 impl Conduit {
@@ -101,14 +104,19 @@ impl Conduit {
     /// Deletes a network of your choice.
     pub async fn delete_network(
         &self,
-        network: Uuid,
+        opts: &DeleteOpts,
     ) -> Result<DeleteNetworkResponse> {
         let url = format!("{}/delete", self.opts.network());
+        let mut network = opts.network.to_string();
+        if network == "00000000-0000-0000-0000-000000000000" {
+            network = "".to_string();
+        }
         self.post(
             url,
             DeleteNetworkRequest {
                 organization: self.opts.organization.to_string(),
-                network: network.to_string(),
+                network: network,
+                name: opts.name.to_string(),
             },
         )
         .await
