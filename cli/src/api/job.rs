@@ -36,7 +36,7 @@ pub struct AssignOpts {
     r#type: i32,
 
     /// A semi-colon separated list of key-value pairs, e.g "--env key:val key2:val2"
-    /// which get passed on to the called script as envirnoment variables (case sensitive)
+    /// which get passed on to the called script as environment variables (case sensitive)
     #[clap(long, num_args(0..))]
     env: Vec<EnvironmentVariable>,
 }
