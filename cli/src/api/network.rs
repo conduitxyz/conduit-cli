@@ -88,7 +88,7 @@ impl Conduit {
                     cpu_requests: opts.cpu as f64,
                     memory_requests_mb: opts.memory as i32,
                     r#type: opts.deployment_type as i32,
-                    // TODO: Why do we just not make `mining` a optional u64
+                    // TODO: Why do we just not make `mining` an optional u64
                     // in proto?
                     mining: opts.block_time.map(|x| Mining::BlockTime(x as i32)),
                 }),
