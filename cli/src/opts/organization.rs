@@ -10,7 +10,7 @@ pub struct OrganizationArgs {
 
 #[derive(Debug, Parser)]
 pub struct SetArgs {
-    /// The organiation we want to set as our default
+    /// The organisation we want to set as our default
     organization: String,
 }
 
