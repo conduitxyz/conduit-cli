@@ -60,9 +60,9 @@ main() {
     exit 0
   fi
 
-  CONDUITUP_REPO=${CONDUITUP_REPO-conduit-xyz/conduit-cli}
+  CONDUITUP_REPO=${CONDUITUP_REPO-conduitxyz/conduit-cli}
 
-  if [[ "$CONDUITUP_REPO" == "conduit-xyz/conduit-cli" && -z "$CONDUITUP_BRANCH" && -z "$CONDUITUP_COMMIT" ]]; then
+  if [[ "$CONDUITUP_REPO" == "conduitxyz/conduit-cli" && -z "$CONDUITUP_BRANCH" && -z "$CONDUITUP_COMMIT" ]]; then
     CONDUITUP_VERSION=${CONDUITUP_VERSION-nightly}
     CONDUITUP_TAG=$CONDUITUP_VERSION
 

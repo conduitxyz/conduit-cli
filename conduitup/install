@@ -7,7 +7,7 @@ CONDUIT_DIR=${CONDUIT_DIR-"$HOME/.conduit"}
 CONDUIT_BIN_DIR="$CONDUIT_DIR/bin"
 CONDUIT_MAN_DIR="$CONDUIT_DIR/share/man/man1"
 
-BIN_URL="https://raw.githubusercontent.com/conduit-xyz/conduit-cli/master/conduitup/conduitup"
+BIN_URL="https://raw.githubusercontent.com/conduitxyz/conduit-cli/master/conduitup/conduitup"
 BIN_PATH="$CONDUIT_BIN_DIR/conduitup"
 
 # Create the .conduit bin directory and conduitup binary if it doesn't exist.

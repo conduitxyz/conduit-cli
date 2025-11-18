@@ -15,7 +15,7 @@ jobs:
           submodules: recursive
 
       - name: Install Conduit
-        uses: conduit-xyz/conduit-toolchain@v1
+        uses: conduitxyz/conduit-toolchain@v1
         with:
           version: nightly
           api_key: ${{ secrets.CONDUIT_API_KEY }}
