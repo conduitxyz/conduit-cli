@@ -7,7 +7,7 @@ on:
 
 env:
     REGISTRY: ghcr.io
-    # Will resolve to conduit-xyz/conduit-cli
+    # Will resolve to conduitxyz/conduit-cli
     IMAGE_NAME: ${{ github.repository }}
 
 jobs:

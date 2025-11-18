@@ -57,7 +57,7 @@ pub fn install() -> eyre::Result<()> {
     } else {
         let (panic_hook, _) = color_eyre::config::HookBuilder::default()
             .panic_section(
-                "This is a bug. Consider reporting it at https://github.com/conduit-xyz/conduit-cli",
+                "This is a bug. Consider reporting it at https://github.com/conduitxyz/conduit-cli",
             )
             .into_hooks();
         panic_hook.install();

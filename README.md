@@ -11,10 +11,10 @@
 First run the command below to get `conduitup`, the Conduit toolchain installer:
 
 ```sh
-curl -L https://raw.githubusercontent.com/conduit-xyz/conduit-cli/master/conduitup/install | bash
+curl -L https://raw.githubusercontent.com/conduitxyz/conduit-cli/master/conduitup/install | bash
 ```
 
-If you do not want to use the redirect, feel free to manually download the conduitup installation script from [here](https://raw.githubusercontent.com/conduit-xyz/conduit-cli/master/conduitup/install).
+If you do not want to use the redirect, feel free to manually download the conduitup installation script from [here](https://raw.githubusercontent.com/conduitxyz/conduit-cli/master/conduitup/install).
 
 Then, run `conduitup` in a new terminal session or after reloading your `PATH`.
 
@@ -25,28 +25,28 @@ Other ways to use `conduitup`, and other documentation, can be found [here](./co
 For people that want to install from source, you can do so like below:
 
 ```sh
-git clone https://github.com/conduit-xyz/conduit-cli
+git clone https://github.com/conduitxyz/conduit-cli
 cd conduit
 # conduit
 cargo install --path ./cli --profile local --bins --locked --force
 ```
 
-Or via `cargo install --git https://github.com/conduit-xyz/conduit-cli --profile local --locked conduit`.
+Or via `cargo install --git https://github.com/conduitxyz/conduit-cli --profile local --locked conduit`.
 
 ### Installing for CI in Github Action
 
-See [https://github.com/conduit-xyz/conduit-toolchain](https://github.com/conduit-xyz/conduit-toolchain) GitHub Action.
+See [https://github.com/conduitxyz/conduit-toolchain](https://github.com/conduitxyz/conduit-toolchain) GitHub Action.
 
 ### Installing via Docker
 
-Conduit maintains a [Docker image repository](https://github.com/conduit-xyz/conduit/pkgs/container/conduit).
+Conduit maintains a [Docker image repository](https://github.com/conduitxyz/conduit/pkgs/container/conduit).
 
 You can pull the latest release image like so:
 
 ```sh
-docker pull ghcr.io/conduit-xyz/conduit-cli:latest
+docker pull ghcr.io/conduitxyz/conduit-cli:latest
 ```
 
 ### Manual Download
 
-You can manually download nightly releases [here](https://github.com/conduit-xyz/conduit-cli/releases).
+You can manually download nightly releases [here](https://github.com/conduitxyz/conduit-cli/releases).
